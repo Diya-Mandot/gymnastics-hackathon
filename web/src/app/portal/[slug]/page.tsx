@@ -4,7 +4,7 @@ import { AthletePortal, type PortalTab } from "./AthletePortal";
 
 export const metadata = { title: "Athlete Intelligence" };
 
-const TABS: PortalTab[] = ["dashboard", "studio", "fit", "deals"];
+const TABS: PortalTab[] = ["dashboard", "studio", "fit", "deals", "copilot", "approvals"];
 
 export function generateStaticParams() {
   return athletes.map((a) => ({ slug: a.slug }));

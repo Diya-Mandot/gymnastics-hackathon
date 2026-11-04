@@ -22,7 +22,10 @@ npm run dev                  # http://localhost:3000
 | `/support/[slug]` | **Phone QR flow**: pick amount → Give $10 Demo → thank-you + I Rocked the Routine card |
 | `/admin` | WRTH admin dashboard with the live transaction reveal and reset |
 | `/admin/revenue` | Revenue Intelligence: scenario simulator (conservative/base/stretch + sliders), funding mix, sponsor funnel, attribution, $2M comparison, live demo records, cost stages, phased rollout |
-| `/portal/[slug]` | Athlete Intelligence: dashboard, AI Brand Studio (media kit + approval), Sponsor Fit reverse matching, deal workspace. Simulated athlete/staff roles |
+| `/portal/[slug]` | Athlete Intelligence: dashboard, AI Brand Studio (media kit + approval), Sponsor Fit reverse matching, deal workspace. Simulated athlete / WRTH manager / creative reviewer roles; Operations Copilot and Approvals tabs |
+| `/cards` | Device-local digital trading-card collection and profile pathway |
+| `/sponsors` | Sponsor Scout, reverse matching, proposal builder, editable CRM, and renewal report |
+| `/insights` | Member-intelligence sample, revenue scenario simulator, break-even, costs, and deployment roadmap |
 | `/demo` | Presenter hub with the QR code |
 | `/demo/admin`, `/demo/athlete/avery` | Chrome-free presenter views |
 
@@ -36,7 +39,11 @@ Set `ANTHROPIC_API_KEY` (locally in `.env.local`, and in the Vercel project sett
 
 `src/lib/finance.ts` holds the year-one model. Existing supporter revenue (450–500 supporters at $10/$25) is shown but never counted as new; pipeline, signed and collected sponsor money are separate; net incremental benefit = new collected − variable costs − build and operating costs; break-even = fixed ÷ (1 − variable rate). Every input is a labelled hypothetical. Whether the $2M goal is annual or cumulative is still to be confirmed with WRTH.
 
-Sample sponsor opportunities live in `src/lib/deals.ts` (localStorage, shared by the portal, admin and revenue pages). "Reset demo" on `/admin` restores the campaign, deals and media-kit approvals.
+Sample sponsor opportunities live in `src/lib/deals.ts` (localStorage, shared by the portal, admin and revenue pages). "Reset demo" on `/admin` restores the campaign, deals, media-kit and portal approvals.
+
+## Revised-plan scope
+
+This branch implements the public fan experience, Athlete Intelligence and Management Portal, and Sponsorship Revenue Engine as a fictional competition MVP. Sponsor targets, campaign results, financial metrics, cards, CRM records, athlete profiles, approvals, and brand-kit outputs are demo data. No external research, email, payment, agreement signing, or automated compliance decision occurs.
 
 ## Live data
 
@@ -47,12 +54,12 @@ All live state goes through `src/lib/live` (`LiveSource`):
 
 ### Backend contract (for Prachi)
 
-The Supabase adapter (`src/lib/live/supabase.ts`) expects:
+The Supabase adapter (`src/lib/live/supabase.ts`) is aligned with the migrations in the repository's root `supabase/` folder. Apply those migrations and `supabase/seed.sql`, then set `NEXT_PUBLIC_DATA_SOURCE=supabase` plus the three Supabase environment variables in `.env.local`.
 
-- `campaigns` table: `id, slug, name, athlete_slug, goal, raised, supporters, business_funding, fan_contributions`. Seed row slug `confidence-starts-here` at 15000 / 8240 / 186 / 6500 / 1740.
-- `donations` table: `id, created_at, supporter_name, athlete_slug, athlete_name, campaign_id, campaign_name, amount, support_type, thank_you_pack, status`.
-- `rpc give_demo(p_campaign_slug, p_athlete_slug, p_amount, p_supporter_name, p_support_type)`: inserts a mock donation and bumps the campaign totals in one transaction. **Never calls a payment provider.**
-- `rpc reset_demo()`: restores the seeded metrics.
+- `campaigns` table: `id, slug, name, goal, current_raised, supporter_count, business_funding, fan_contributions` plus its linked athlete.
+- `donations` table: `id, created_at, supporter_name, campaign_id, athlete_id, amount, support_type, thank_you_pack_sent`.
+- `rpc create_demo_donation(p_campaign_slug, p_supporter_name, p_amount)`: inserts a mock donation and bumps campaign totals atomically. **It never calls a payment provider.**
+- `rpc reset_confidence_starts_here_demo()`: restores seeded metrics; it is server/service-role only. The admin UI calls `/api/demo/reset`, which requires `DEMO_RESET_SECRET`.
 - Realtime enabled on both tables (the client listens to `INSERT` on `donations` and `UPDATE` on `campaigns`).
 
 Athletes, tiers, packages, tasks and prospects are static in `src/lib/seed.ts` for now. The sponsor matcher (`src/lib/match.ts`) runs client-side with the plan's weights (cause 35, audience 25, format 20, budget 10, availability 10). The default brief returns Avery 94%, Mia 89%, Sofia 85%.

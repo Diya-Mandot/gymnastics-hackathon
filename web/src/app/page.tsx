@@ -61,6 +61,7 @@ export default function Home() {
             <div className="mt-8 flex animate-rise flex-wrap gap-3 [animation-delay:180ms]">
               <Link href="/match" className="btn btn-red">Get matched</Link>
               <Link href="/athletes" className="btn btn-line">Meet the athletes</Link>
+              <Link href="/cards" className="btn btn-line">Collect cards</Link>
             </div>
           </div>
           <div className="w-full max-w-sm animate-rise [animation-delay:240ms]">

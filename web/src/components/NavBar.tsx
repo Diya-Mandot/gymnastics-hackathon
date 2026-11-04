@@ -9,7 +9,10 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/match", label: "Get Matched" },
   { href: "/athletes", label: "Athletes" },
+  { href: "/cards", label: "Cards" },
   { href: "/routines", label: "Impact Routines" },
+  { href: "/sponsors", label: "Sponsors" },
+  { href: "/insights", label: "Revenue" },
   { href: "/support", label: "Support" },
   { href: "/portal", label: "Athlete Portal" },
   { href: "/admin", label: "Admin" },
@@ -32,7 +35,7 @@ export function NavBar() {
         <Link href="/" aria-label="Rock the Routine home">
           <Wordmark />
         </Link>
-        <ul className="hidden items-center gap-7 lg:flex">
+        <ul className="hidden items-center gap-6 xl:flex">
           {links.map((l) => (
             <li key={l.href}>
               <Link
@@ -46,11 +49,11 @@ export function NavBar() {
             </li>
           ))}
         </ul>
-        <Link href="/support/avery" className="btn btn-red hidden !px-5 !py-2.5 text-sm lg:inline-flex">
+        <Link href="/support/avery" className="btn btn-red hidden !px-5 !py-2.5 text-sm xl:inline-flex">
           Back a gymnast
         </Link>
         <button
-          className="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface lg:hidden"
+          className="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface xl:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           aria-label={open ? "Close menu" : "Open menu"}
@@ -63,7 +66,7 @@ export function NavBar() {
         </button>
       </nav>
       {open && (
-        <ul id="mobile-nav" className="border-t border-line px-4 pb-6 pt-2 lg:hidden">
+        <ul id="mobile-nav" className="border-t border-line px-4 pb-6 pt-2 xl:hidden">
           {links.map((l) => (
             <li key={l.href}>
               <Link

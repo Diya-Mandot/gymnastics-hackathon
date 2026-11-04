@@ -1,32 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import type { Deal } from "./dealModel";
+
+export { dealTotals, isSigned, STAGES } from "./dealModel";
+export type { Deal, DealTask, Stage } from "./dealModel";
 
 // Sample sponsor opportunities (fictional) shared by the Athlete Portal, admin and revenue views.
 // Stored in localStorage so stage changes, approvals and payments persist across pages in the demo.
-
-export const STAGES = ["Prospect", "Qualified", "Contacted", "Meeting", "Proposal", "Negotiation", "Agreement", "Campaign", "Renewal"] as const;
-export type Stage = (typeof STAGES)[number];
-
-/** A deal counts as signed from Agreement onward. Signed value and collected cash are tracked separately. */
-export const isSigned = (s: Stage) => STAGES.indexOf(s) >= STAGES.indexOf("Agreement");
-
-export type DealTask = { id: string; title: string; owner: "Athlete" | "WRTH team" | "Sponsor"; due: string; done: boolean };
-
-export type Deal = {
-  id: string;
-  sponsor: string;
-  athleteSlug: string;
-  packageName: string;
-  amount: number;
-  stage: Stage;
-  collected: number;
-  athleteApproval: "pending" | "approved" | "changes-requested";
-  owner: string;
-  nextAction: string;
-  followUp: string;
-  tasks: DealTask[];
-};
 
 const seedDeals: Deal[] = [
   {
@@ -115,16 +96,4 @@ export function useDeals() {
   }, []);
 
   return { deals, update, add, reset };
-}
-
-export function dealTotals(deals: Deal[]) {
-  const open = deals.filter((d) => !isSigned(d.stage));
-  const signed = deals.filter((d) => isSigned(d.stage));
-  return {
-    pipeline: open.reduce((s, d) => s + d.amount, 0),
-    signed: signed.reduce((s, d) => s + d.amount, 0),
-    collected: deals.reduce((s, d) => s + d.collected, 0),
-    openCount: open.length,
-    signedCount: signed.length,
-  };
 }

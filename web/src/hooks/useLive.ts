@@ -38,8 +38,8 @@ export function useLive() {
     return e;
   }, []);
 
-  const reset = useCallback(async () => {
-    setState(await getLiveSource().reset());
+  const reset = useCallback(async (passcode?: string) => {
+    setState(await getLiveSource().reset(passcode));
     setLastDonation(null);
   }, []);
 

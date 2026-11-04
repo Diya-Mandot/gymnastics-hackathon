@@ -48,8 +48,8 @@ export function AthleteProfile({ athlete }: { athlete: Athlete }) {
             </blockquote>
             <div className="mt-8 flex animate-rise flex-wrap gap-3 [animation-delay:180ms]">
               <Link href={`/support/${athlete.slug}`} className="btn btn-red">Back {athlete.firstName}</Link>
-              <Link href={`/routines?athlete=${athlete.slug}`} className="btn btn-line">Build a campaign</Link>
-              <a href="#celebration" className="btn btn-line">Book a video</a>
+              <Link href="/cards" className="btn btn-line">Collect card</Link>
+              <Link href="/sponsors" className="btn btn-line">Sponsor inquiry</Link>
             </div>
           </div>
         </div>

@@ -164,9 +164,13 @@ export function BrandStudio({ athlete, role }: { athlete: Athlete; role: Role })
                     </>
                   )
                 ) : kitStatus === "approved" ? (
-                  <button className="btn btn-ink" onClick={() => alert("Demo: media kit shared with the sponsor pipeline. Nothing is emailed automatically.")}>
-                    Share with sponsors
-                  </button>
+                  role === "staff" ? (
+                    <button className="btn btn-ink" onClick={() => alert("Demo: media kit shared with the sponsor pipeline. Nothing is emailed automatically.")}>
+                      Share with sponsors
+                    </button>
+                  ) : (
+                    <p className="text-sm text-muted">Approved by {athlete.firstName}. A WRTH manager can share it with sponsors.</p>
+                  )
                 ) : (
                   <p className="text-sm text-muted">
                     {kitStatus === "changes-requested" ? `${athlete.firstName} requested changes. Edit inputs and regenerate.` : `Waiting for ${athlete.firstName} to approve. Switch to the athlete role to approve.`}

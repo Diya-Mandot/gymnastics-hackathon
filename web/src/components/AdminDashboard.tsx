@@ -31,6 +31,7 @@ export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
   const now = useNow();
   const [fanActions, setFanActions] = useState<FanAction[]>([]);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [resetPasscode, setResetPasscode] = useState("");
 
   useEffect(() => setFanActions(seedFanActions()), []);
 
@@ -59,15 +60,28 @@ export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
           {confirmReset ? (
             <>
               <span className="text-sm text-muted">Restore seeded numbers?</span>
+              {!isMockSource() && (
+                <input
+                  className="input max-w-40 !py-2 text-sm"
+                  type="password"
+                  value={resetPasscode}
+                  onChange={(event) => setResetPasscode(event.target.value)}
+                  placeholder="Demo reset code"
+                  aria-label="Demo reset code"
+                />
+              )}
               <button
                 className="btn btn-ink !py-2 text-sm"
                 onClick={async () => {
-                  await reset();
+                  await reset(resetPasscode);
                   resetDeals();
                   try {
-                    Object.keys(localStorage).filter((k) => k.startsWith("rtr:mediakit:")).forEach((k) => localStorage.removeItem(k));
+                    Object.keys(localStorage)
+                      .filter((k) => k.startsWith("rtr:mediakit:") || k.startsWith("rtr:approvals:"))
+                      .forEach((k) => localStorage.removeItem(k));
                   } catch {}
                   setConfirmReset(false);
+                  setResetPasscode("");
                 }}
               >
                 Reset

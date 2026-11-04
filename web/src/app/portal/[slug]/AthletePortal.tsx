@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AthletePortrait } from "@/components/AthletePortrait";
 import { FeatureBadge } from "@/components/Badges";
-import { useRole, type Role } from "@/hooks/useRole";
+import { ROLE_LABELS, useRole, type Role } from "@/hooks/useRole";
 import { isSigned, useDeals, type Deal } from "@/lib/deals";
 import { compact, usd } from "@/lib/labels";
 import { athletes } from "@/lib/seed";
@@ -11,14 +11,17 @@ import { rankCategories } from "@/lib/sponsors";
 import type { Athlete } from "@/lib/types";
 import { BrandStudio, useKitStatus, type KitStatus } from "./BrandStudio";
 import { DealsBoard } from "./DealsBoard";
+import { Approvals, OperationsCopilot } from "./Operations";
 
-export type PortalTab = "dashboard" | "studio" | "fit" | "deals";
+export type PortalTab = "dashboard" | "studio" | "fit" | "deals" | "copilot" | "approvals";
 
 const TAB_LABELS: Record<PortalTab, string> = {
   dashboard: "Dashboard",
   studio: "Brand Studio",
   fit: "Sponsor Fit",
   deals: "Deals",
+  copilot: "Operations Copilot",
+  approvals: "Approvals",
 };
 
 export function AthletePortal({ athlete, tab }: { athlete: Athlete; tab: PortalTab }) {
@@ -79,6 +82,8 @@ export function AthletePortal({ athlete, tab }: { athlete: Athlete; tab: PortalT
           {tab === "studio" && <BrandStudio athlete={athlete} role={role} />}
           {tab === "fit" && <SponsorFit athlete={athlete} deals={deals} add={add} />}
           {tab === "deals" && <DealsBoard athlete={athlete} role={role} deals={deals} update={update} />}
+          {tab === "copilot" && <OperationsCopilot athlete={athlete} deals={deals} />}
+          {tab === "approvals" && <Approvals athlete={athlete} role={role} deals={deals} update={update} kitStatus={kitStatus} />}
         </div>
       </div>
     </>
@@ -88,7 +93,7 @@ export function AthletePortal({ athlete, tab }: { athlete: Athlete; tab: PortalT
 function RoleSwitch({ role, setRole }: { role: Role; setRole: (r: Role) => void }) {
   return (
     <div className="flex rounded-full border border-line bg-surface p-1" role="radiogroup" aria-label="Viewing as">
-      {(["athlete", "staff"] as Role[]).map((r) => (
+      {(Object.keys(ROLE_LABELS) as Role[]).map((r) => (
         <button
           key={r}
           role="radio"
@@ -96,7 +101,7 @@ function RoleSwitch({ role, setRole }: { role: Role; setRole: (r: Role) => void 
           onClick={() => setRole(r)}
           className={`rounded-full px-4 py-1.5 text-sm transition-colors ${role === r ? "bg-ink text-paper" : "text-muted hover:text-ink"}`}
         >
-          {r === "athlete" ? "Athlete view" : "WRTH staff view"}
+          {ROLE_LABELS[r]}
         </button>
       ))}
     </div>

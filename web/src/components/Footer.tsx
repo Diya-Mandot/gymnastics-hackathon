@@ -25,6 +25,7 @@ export function Footer() {
           links={[
             ["/match", "Get Matched"],
             ["/athletes", "Athletes"],
+            ["/cards", "Collect cards"],
             ["/routines", "Impact Routines"],
           ]}
         />
@@ -34,6 +35,9 @@ export function Footer() {
             ["/support", "Join the routine"],
             ["/support/avery", "Back Avery ($10 demo)"],
             ["/admin", "Admin demo"],
+            ["/sponsors", "Sponsor Revenue Engine"],
+            ["/insights", "Revenue intelligence"],
+            ["/portal", "Athlete management portal"],
           ]}
         />
       </div>

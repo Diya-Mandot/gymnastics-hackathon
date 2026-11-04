@@ -49,9 +49,9 @@ const steps: Step[] = [
     question: "What is your budget?",
     options: [
       { value: 5000, label: "$5,000", hint: "Community Spark" },
-      { value: 10000, label: "$10,000", hint: "Between packages" },
       { value: 15000, label: "$15,000", hint: "Impact Routine" },
-      { value: 30000, label: "$30,000+", hint: "Red Rocks Partner" },
+      { value: 50000, label: "$50,000", hint: "Red Rocks Partner" },
+      { value: 200000, label: "$200,000", hint: "Strategic Partner" },
     ],
   },
   {

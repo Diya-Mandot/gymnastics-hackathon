@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import { useLive } from "@/hooks/useLive";
 import { isMockSource } from "@/lib/live";
 import { compact, timeAgo, usd } from "@/lib/labels";
-import { athleteBySlug, prospects, seedFanActions, tasks } from "@/lib/seed";
+import { isSigned, useDeals } from "@/lib/deals";
+import { athleteBySlug, seedFanActions, tasks } from "@/lib/seed";
 import type { Donation, FanAction } from "@/lib/types";
+import { AdminTabs } from "./AdminTabs";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { ChalkArc } from "./ChalkArc";
 import { LiveDot, ProgressBar } from "./CampaignProgress";
@@ -25,6 +27,7 @@ function useNow(ms = 10_000) {
 
 export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
   const { campaign, activity, lastDonation, reset, ready, error } = useLive();
+  const { deals, reset: resetDeals } = useDeals();
   const now = useNow();
   const [fanActions, setFanActions] = useState<FanAction[]>([]);
   const [confirmReset, setConfirmReset] = useState(false);
@@ -36,10 +39,12 @@ export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-8">
-      {presenter && (
+      {presenter ? (
         <div className="mb-10">
           <Wordmark />
         </div>
+      ) : (
+        <AdminTabs active="live" />
       )}
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -58,6 +63,10 @@ export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
                 className="btn btn-ink !py-2 text-sm"
                 onClick={async () => {
                   await reset();
+                  resetDeals();
+                  try {
+                    Object.keys(localStorage).filter((k) => k.startsWith("rtr:mediakit:")).forEach((k) => localStorage.removeItem(k));
+                  } catch {}
                   setConfirmReset(false);
                 }}
               >
@@ -179,16 +188,16 @@ export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
 
         <Panel title="Sponsor pipeline" right={<span className="text-xs text-muted">Drafts only, never auto-sends</span>}>
           <ul className="divide-y divide-line">
-            {prospects.map((p) => (
-              <li key={p.id} className="flex items-center gap-3 py-3">
+            {deals.map((d) => (
+              <li key={d.id} className="flex items-center gap-3 py-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-ink">{p.business}</p>
+                  <p className="truncate text-sm font-medium text-ink">{d.sponsor}</p>
                   <p className="text-xs text-faint">
-                    {p.category} · match: {athleteBySlug(p.athleteSlug)?.firstName}
+                    {d.packageName} · match: {athleteBySlug(d.athleteSlug)?.firstName} · {usd(d.collected)} collected
                   </p>
                 </div>
-                <span className="font-display text-lg text-ink tabular-nums">${compact(p.budget)}</span>
-                <StagePill stage={p.stage} />
+                <span className="font-display text-lg text-ink tabular-nums">${compact(d.amount)}</span>
+                <StagePill stage={d.stage} signed={isSigned(d.stage)} />
               </li>
             ))}
           </ul>
@@ -267,15 +276,8 @@ function StatusIcon({ status }: { status: "done" | "in-progress" | "todo" }) {
   return <span className="h-5 w-5 rounded-full border-[1.5px] border-line" aria-label="To do" />;
 }
 
-function StagePill({ stage }: { stage: string }) {
-  const tone: Record<string, string> = {
-    Committed: "!bg-ink !text-paper",
-    Proposal: "!bg-red-soft !text-red-dark",
-    Contacted: "",
-    Drafted: "",
-    Researching: "",
-  };
-  return <span className={`tag !text-[11px] ${tone[stage]}`}>{stage}</span>;
+function StagePill({ stage, signed }: { stage: string; signed: boolean }) {
+  return <span className={`tag !text-[11px] ${signed ? "!bg-ink !text-paper" : stage === "Proposal" || stage === "Negotiation" ? "!bg-red-soft !text-red-dark" : ""}`}>{stage}</span>;
 }
 
 function FundingMix({ business, fans, goal }: { business: number; fans: number; goal: number }) {

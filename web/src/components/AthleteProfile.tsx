@@ -114,7 +114,7 @@ export function AthleteProfile({ athlete }: { athlete: Athlete }) {
       <section className="mt-24">
         <p className="text-sm font-semibold text-red-lit">For businesses</p>
         <h2 className="mt-3 font-display text-5xl text-ink sm:text-6xl">Campaign packages</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {sponsorPackages.map((p) => {
             const hot = p.id === "routine";
             return (

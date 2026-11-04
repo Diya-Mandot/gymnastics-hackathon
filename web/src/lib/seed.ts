@@ -3,7 +3,6 @@ import type {
   Campaign,
   Donation,
   FanAction,
-  Prospect,
   SponsorPackage,
   SupporterTier,
   Task,
@@ -214,13 +213,6 @@ export const tasks: Task[] = [
   { id: "t7", title: "Create campaign recap", owner: "Raghav", due: "Nov 20", status: "todo", approval: "pending" },
 ];
 
-export const prospects: Prospect[] = [
-  { id: "p1", business: "Summit Bloom Family Wellness", category: "Family wellness", stage: "Committed", budget: 15000, athleteSlug: "avery" },
-  { id: "p2", business: "Canyon Byte Learning Lab", category: "STEM education", stage: "Proposal", budget: 5000, athleteSlug: "sofia" },
-  { id: "p3", business: "Wasatch Peak Credit Union", category: "Financial services", stage: "Contacted", budget: 30000, athleteSlug: "jordan" },
-  { id: "p4", business: "Little Arches Pediatrics", category: "Healthcare", stage: "Drafted", budget: 15000, athleteSlug: "mia" },
-];
-
 export const supporterTiers: SupporterTier[] = [
   { id: "free", name: "Red Rocks Fan", price: "Free", perks: ["Athlete stories", "Campaign updates", "QR activations", "Sponsor offers"] },
   { id: "chalk", name: "Chalk Circle", price: "$10/mo", perks: ["Digital thank-you card", "Athlete update video", "Early campaign access"] },
@@ -231,5 +223,6 @@ export const supporterTiers: SupporterTier[] = [
 export const sponsorPackages: SponsorPackage[] = [
   { id: "spark", name: "Community Spark", price: 5000, priceLabel: "$5,000", perks: ["Athlete story", "One social post", "Sponsor mention", "QR campaign page"] },
   { id: "routine", name: "Impact Routine", price: 15000, priceLabel: "$15,000", perks: ["Athlete story", "Social kit", "Meet-night QR activation", "Sponsor offer", "Final impact report"] },
-  { id: "partner", name: "Red Rocks Partner", price: 30000, priceLabel: "$30,000+", perks: ["Multi-athlete campaign", "Community event", "Campaign recap", "Season report"] },
+  { id: "partner", name: "Red Rocks Partner", price: 50000, priceLabel: "$50,000", perks: ["Multi-athlete campaign", "Community event", "Campaign recap", "Season report"] },
+  { id: "strategic", name: "Strategic Partner", price: 200000, priceLabel: "$200,000", perks: ["Season-long team partnership", "Meet-night presenting rights", "Athlete content series", "Quarterly impact reports", "Renewal planning"] },
 ];

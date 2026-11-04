@@ -107,15 +107,6 @@ export type Task = {
   approval: "approved" | "pending" | "not-needed";
 };
 
-export type Prospect = {
-  id: string;
-  business: string;
-  category: string;
-  stage: "Researching" | "Drafted" | "Contacted" | "Proposal" | "Committed";
-  budget: number;
-  athleteSlug: string;
-};
-
 export type SupporterTier = {
   id: string;
   name: string;

@@ -130,7 +130,7 @@ export function Explore({ athletes }: { athletes: Athlete[] }) {
               label="Budget"
               value={String(f.budget || "")}
               onChange={(v) => set("budget", Number(v) || 0)}
-              options={{ "5000": "Up to $5K", "10000": "Up to $10K", "15000": "Up to $15K", "30000": "Up to $30K" }}
+              options={{ "5000": "Up to $5K", "10000": "Up to $10K", "15000": "Up to $15K", "50000": "Up to $50K" }}
             />
             <Select
               label="Availability"

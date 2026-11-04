@@ -11,6 +11,7 @@ const links = [
   { href: "/athletes", label: "Athletes" },
   { href: "/routines", label: "Impact Routines" },
   { href: "/support", label: "Support" },
+  { href: "/portal", label: "Athlete Portal" },
   { href: "/admin", label: "Admin" },
 ];
 

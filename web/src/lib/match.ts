@@ -81,9 +81,11 @@ function availabilityFit(a: Athlete) {
 }
 
 export function recommendPackage(brief: Pick<SponsorBrief, "budget" | "scope">): SponsorPackage {
-  if (brief.scope === "team" || brief.budget >= 30000) return sponsorPackages[2];
-  if (brief.budget >= 15000) return sponsorPackages[1];
-  return sponsorPackages[0];
+  const byId = (id: string) => sponsorPackages.find((p) => p.id === id)!;
+  if (brief.budget >= 200000) return byId("strategic");
+  if (brief.scope === "team" || brief.budget >= 50000) return byId("partner");
+  if (brief.budget >= 15000) return byId("routine");
+  return byId("spark");
 }
 
 export function scoreAthlete(a: Athlete, brief: SponsorBrief): MatchResult {

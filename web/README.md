@@ -21,6 +21,8 @@ npm run dev                  # http://localhost:3000
 | `/support` | Fan/supporter landing with Find Your Routine |
 | `/support/[slug]` | **Phone QR flow**: pick amount → Give $10 Demo → thank-you + I Rocked the Routine card |
 | `/admin` | WRTH admin dashboard with the live transaction reveal and reset |
+| `/admin/revenue` | Revenue Intelligence: scenario simulator (conservative/base/stretch + sliders), funding mix, sponsor funnel, attribution, $2M comparison, live demo records, cost stages, phased rollout |
+| `/portal/[slug]` | Athlete Intelligence: dashboard, AI Brand Studio (media kit + approval), Sponsor Fit reverse matching, deal workspace. Simulated athlete/staff roles |
 | `/demo` | Presenter hub with the QR code |
 | `/demo/admin`, `/demo/athlete/avery` | Chrome-free presenter views |
 
@@ -29,6 +31,12 @@ npm run dev                  # http://localhost:3000
 `/routines` has a "Draft with AI" panel (also reachable from each Get Matched result). `POST /api/brief` sends the athlete's profile, Story Seed transcript, sponsor brief and package to Claude Opus 5.5 (low effort, streaming, server-side refusal fallback) and streams back a campaign title, fit rationale, three captions, content plan, task list and sponsor email. Everything is labelled as a draft the athlete approves; nothing is posted or emailed.
 
 Set `ANTHROPIC_API_KEY` (locally in `.env.local`, and in the Vercel project settings) for live generation. Without a key, or if the API call fails to start, the route streams a deterministic sample and the panel labels it "Offline sample".
+
+## Revenue model
+
+`src/lib/finance.ts` holds the year-one model. Existing supporter revenue (450–500 supporters at $10/$25) is shown but never counted as new; pipeline, signed and collected sponsor money are separate; net incremental benefit = new collected − variable costs − build and operating costs; break-even = fixed ÷ (1 − variable rate). Every input is a labelled hypothetical. Whether the $2M goal is annual or cumulative is still to be confirmed with WRTH.
+
+Sample sponsor opportunities live in `src/lib/deals.ts` (localStorage, shared by the portal, admin and revenue pages). "Reset demo" on `/admin` restores the campaign, deals and media-kit approvals.
 
 ## Live data
 

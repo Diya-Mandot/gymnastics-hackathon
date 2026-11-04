@@ -25,7 +25,7 @@ const routineParts = [
 ];
 
 const path = [
-  { label: "Today", value: "$200K" },
+  { label: "Today (unverified)", value: "$200K" },
   { label: "Year 1", value: "$646K" },
   { label: "Year 2", value: "$1.24M" },
   { label: "Year 3", value: "$2M" },
@@ -200,8 +200,9 @@ export default function Home() {
       {/* Three-year path */}
       <section className="border-t border-line bg-surface">
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-8">
-          <SectionHeading eyebrow="The model" title={<>From $200K to <em>$2M</em> in NIL activity.</>} align="center">
-            Sponsor campaigns, supporter subscriptions, and athlete experiences, with renewal built in.
+          <SectionHeading eyebrow="Illustrative model" title={<>A path toward <em>$2M</em> in NIL activity.</>} align="center">
+            Sponsor campaigns, new supporters, and athlete experiences, with renewal built in. These are planning targets: the
+            $200K starting point stays unverified until WRTH confirms actual figures.
           </SectionHeading>
           <ol className="relative mx-auto mt-16 grid max-w-5xl grid-cols-2 gap-y-10 md:grid-cols-4">
             <span className="absolute left-[12.5%] right-[12.5%] top-[7px] hidden h-px bg-line md:block" aria-hidden="true" />
@@ -213,7 +214,10 @@ export default function Home() {
               </li>
             ))}
           </ol>
-          <p className="mt-10 text-center text-xs text-faint">Targets, not guarantees.</p>
+          <div className="mt-12 text-center">
+            <Link href="/admin/revenue" className="btn btn-line">Test the assumptions in the revenue simulator</Link>
+            <p className="mt-4 text-xs text-faint">Targets, not guarantees.</p>
+          </div>
         </div>
       </section>
     </>

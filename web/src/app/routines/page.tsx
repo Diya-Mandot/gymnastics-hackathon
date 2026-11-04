@@ -8,7 +8,7 @@ export const metadata = { title: "Impact Routines" };
 export default async function RoutinesPage({ searchParams }: { searchParams: Promise<{ athlete?: string; package?: string; ai?: string }> }) {
   const sp = await searchParams;
   const athlete = athleteBySlug(sp.athlete ?? "") ?? athleteBySlug("avery")!;
-  const pkg = sponsorPackages.find((p) => p.id === sp.package) ?? sponsorPackages[1];
+  const pkg = sponsorPackages.find((p) => p.id === sp.package) ?? sponsorPackages.find((p) => p.id === "routine")!;
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-24 pt-14 sm:px-8">

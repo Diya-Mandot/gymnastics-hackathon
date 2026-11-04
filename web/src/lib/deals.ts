@@ -11,7 +11,7 @@ export type { Deal, DealTask, Stage } from "./dealModel";
 
 const seedDeals: Deal[] = [
   {
-    id: "d-summit", sponsor: "Summit Bloom Family Wellness", athleteSlug: "avery", packageName: "Impact Routine", amount: 15000,
+    id: "d-brightpath", sponsor: "BrightPath Family Wellness", athleteSlug: "avery", packageName: "Impact Routine", amount: 15000,
     stage: "Campaign", collected: 7500, athleteApproval: "approved", owner: "WRTH partnerships", nextAction: "Collect second installment after meet night", followUp: "Nov 22",
     tasks: [
       { id: "t1", title: "Record 45s story video", owner: "Athlete", due: "Nov 4", done: true },
@@ -45,7 +45,7 @@ const seedDeals: Deal[] = [
   },
 ];
 
-const KEY = "rtr:deals:v1";
+const KEY = "rtr:deals:v2";
 const CHANNEL = "rtr-deals";
 
 function read(): Deal[] {

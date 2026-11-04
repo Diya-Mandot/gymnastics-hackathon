@@ -36,7 +36,7 @@ export function Footer() {
             ["/support/avery", "Back Avery ($10 demo)"],
             ["/admin", "Admin demo"],
             ["/sponsors", "Sponsor Revenue Engine"],
-            ["/insights", "Revenue intelligence"],
+            ["/admin/revenue", "Revenue intelligence"],
             ["/portal", "Athlete management portal"],
           ]}
         />

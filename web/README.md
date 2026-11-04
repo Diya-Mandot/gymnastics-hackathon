@@ -21,11 +21,10 @@ npm run dev                  # http://localhost:3000
 | `/support` | Fan/supporter landing with Find Your Routine |
 | `/support/[slug]` | **Phone QR flow**: pick amount → Give $10 Demo → thank-you + I Rocked the Routine card |
 | `/admin` | WRTH admin dashboard with the live transaction reveal and reset |
-| `/admin/revenue` | Revenue Intelligence: scenario simulator (conservative/base/stretch + sliders), funding mix, sponsor funnel, attribution, $2M comparison, live demo records, cost stages, phased rollout |
+| `/admin/revenue` | Revenue Intelligence (the one revenue dashboard; `/insights` redirects here): scenario simulator (conservative/base/stretch + sliders), funding mix, sponsor funnel, attribution, $2M comparison, live demo records, member-intelligence sample, cost stages, phased rollout |
 | `/portal/[slug]` | Athlete Intelligence: dashboard, AI Brand Studio (media kit + approval), Sponsor Fit reverse matching, deal workspace. Simulated athlete / WRTH manager / creative reviewer roles; Operations Copilot and Approvals tabs |
 | `/cards` | Device-local digital trading-card collection and profile pathway |
 | `/sponsors` | Sponsor Scout, reverse matching, proposal builder, editable CRM, and renewal report |
-| `/insights` | Member-intelligence sample, revenue scenario simulator, break-even, costs, and deployment roadmap |
 | `/demo` | Presenter hub with the QR code |
 | `/demo/admin`, `/demo/athlete/avery` | Chrome-free presenter views |
 
@@ -50,11 +49,11 @@ This branch implements the public fan experience, Athlete Intelligence and Manag
 All live state goes through `src/lib/live` (`LiveSource`):
 
 - **mock** (default): localStorage + BroadcastChannel. Two tabs in the same browser sync instantly. It does **not** sync phone → laptop.
-- **supabase**: set `NEXT_PUBLIC_DATA_SOURCE=supabase` plus URL/anon key.
+- **supabase**: used automatically when `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or the older `..._ANON_KEY`) are set. `NEXT_PUBLIC_DATA_SOURCE=mock` forces the mock.
 
 ### Backend contract (for Prachi)
 
-The Supabase adapter (`src/lib/live/supabase.ts`) is aligned with the migrations in the repository's root `supabase/` folder. Apply those migrations and `supabase/seed.sql`, then set `NEXT_PUBLIC_DATA_SOURCE=supabase` plus the three Supabase environment variables in `.env.local`.
+The Supabase adapter (`src/lib/live/supabase.ts`) is aligned with the migrations in the repository's root `supabase/` folder. Apply those migrations and `supabase/seed.sql`, then set the Supabase URL, publishable key, service-role key and `DEMO_RESET_SECRET` in `.env.local`.
 
 - `campaigns` table: `id, slug, name, goal, current_raised, supporter_count, business_funding, fan_contributions` plus its linked athlete.
 - `donations` table: `id, created_at, supporter_name, campaign_id, athlete_id, amount, support_type, thank_you_pack_sent`.

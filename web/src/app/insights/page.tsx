@@ -1,5 +1,6 @@
-import { RevenueInsights } from "./RevenueInsights";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Revenue Intelligence" };
-
-export default function InsightsPage() { return <RevenueInsights />; }
+// Revenue Intelligence lives at /admin/revenue; keep old links working.
+export default function InsightsPage() {
+  redirect("/admin/revenue");
+}

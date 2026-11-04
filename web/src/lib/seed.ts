@@ -155,7 +155,7 @@ export const seedCampaign: Campaign = {
   slug: "confidence-starts-here",
   name: "Confidence Starts Here",
   athleteSlug: "avery",
-  sponsorName: "Summit Bloom Family Wellness",
+  sponsorName: "BrightPath Family Wellness",
   partner: "Girls on the Run Utah",
   goal: 15000,
   raised: 8240,
@@ -199,7 +199,7 @@ export function seedFanActions(now = Date.now()): FanAction[] {
     { id: "fa-1", createdAt: minutesAgo(now, 2), who: "Lily, age 9", action: "shared a confidence note for Avery" },
     { id: "fa-2", createdAt: minutesAgo(now, 8), who: "Marcus T.", action: "nominated his daughter’s coach" },
     { id: "fa-3", createdAt: minutesAgo(now, 15), who: "Section 14 fan", action: "scanned the meet-night QR" },
-    { id: "fa-4", createdAt: minutesAgo(now, 26), who: "Jenna P.", action: "claimed the Summit Bloom family offer" },
+    { id: "fa-4", createdAt: minutesAgo(now, 26), who: "Jenna P.", action: "claimed the BrightPath family offer" },
   ];
 }
 

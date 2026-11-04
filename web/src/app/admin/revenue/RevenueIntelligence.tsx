@@ -109,6 +109,7 @@ export function RevenueIntelligence() {
       </div>
 
       <LiveRecords />
+      <MemberIntelligence inputs={inputs} />
       <CostsAndRoadmap />
     </div>
   );
@@ -344,6 +345,38 @@ function Rec({ label, value, sub }: { label: string; value: string; sub: string 
       <dd className="mt-1 font-display text-3xl text-ink">{value}</dd>
       <dd className="text-xs text-faint">{sub}</dd>
     </div>
+  );
+}
+
+function MemberIntelligence({ inputs }: { inputs: FinanceInputs }) {
+  const on25 = Math.round(inputs.existingSupporters * inputs.existingPct25);
+  const on10 = inputs.existingSupporters - on25;
+  const tiles: [string, string, string][] = [
+    ["Active members", String(inputs.existingSupporters), "from assumption A"],
+    ["Chalk Circle · $10", String(on10), `${pct(1 - inputs.existingPct25)} of members`],
+    ["Routine Partner · $25", String(on25), `${pct(inputs.existingPct25)} of members`],
+    ["Upgrade-ready", "64", "engaged $10 members, illustrative"],
+    ["At-risk renewals", "38", "no activity in 60 days, illustrative"],
+    ["Card collectors", "186", "digital cards collected, illustrative"],
+  ];
+  return (
+    <section className="card mt-6 p-6" aria-label="Member intelligence">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <h2 className="font-display text-2xl text-ink">
+          Member intelligence <span className="text-muted">· sample</span>
+        </h2>
+        <p className="text-xs text-faint">Retain the supporters you acquire. Production needs approved membership data and consent.</p>
+      </div>
+      <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-[16px] border border-line bg-line md:grid-cols-3 lg:grid-cols-6">
+        {tiles.map(([k, v, sub]) => (
+          <div key={k} className="bg-surface p-5">
+            <dt className="text-sm text-muted">{k}</dt>
+            <dd className="mt-1 font-display text-4xl text-ink">{v}</dd>
+            <dd className="mt-1 text-xs text-faint">{sub}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }
 

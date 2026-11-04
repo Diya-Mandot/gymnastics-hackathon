@@ -33,7 +33,7 @@ export const sponsorCategories: SponsorCategory[] = [
 ];
 
 export const sampleBusinesses: SampleBusiness[] = [
-  { id: "b-summit", name: "Summit Bloom Family Wellness", categoryId: "family-health", location: "Sandy, UT", objective: "Reach Utah families and build local trust", budget: 15000, warmContact: "Owner is a WRTH supporter" },
+  { id: "b-brightpath", name: "BrightPath Family Wellness", categoryId: "family-health", location: "Salt Lake City, UT", objective: "Reach Utah families and build local trust", budget: 15000, warmContact: "Owner is a WRTH supporter" },
   { id: "b-arches", name: "Little Arches Pediatrics", categoryId: "pediatrics", location: "West Valley City, UT", objective: "Launch an inclusive kids' clinic day", budget: 15000, warmContact: null },
   { id: "b-canyon", name: "Canyon Byte Learning Lab", categoryId: "stem-learning", location: "Logan, UT", objective: "Fill fall STEM camp enrollment", budget: 5000, warmContact: "Met at Dumke open house" },
   { id: "b-wasatch", name: "Wasatch Peak Credit Union", categoryId: "banking", location: "Salt Lake City, UT", objective: "Open first accounts with U students", budget: 50000, warmContact: null },

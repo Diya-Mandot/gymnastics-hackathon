@@ -12,7 +12,7 @@ const links = [
   { href: "/cards", label: "Cards" },
   { href: "/routines", label: "Impact Routines" },
   { href: "/sponsors", label: "Sponsors" },
-  { href: "/insights", label: "Revenue" },
+  { href: "/admin/revenue", label: "Revenue" },
   { href: "/support", label: "Support" },
   { href: "/portal", label: "Athlete Portal" },
   { href: "/admin", label: "Admin" },
@@ -27,7 +27,9 @@ export function NavBar() {
   // The phone QR flow and presenter views stay chrome-free.
   if (pathname.startsWith("/support/") || pathname.startsWith("/demo")) return null;
 
-  const active = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  // Most specific match wins, so /admin/revenue highlights "Revenue" and not also "Admin".
+  const matches = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  const active = (href: string) => matches(href) && !links.some((l) => l.href !== href && l.href.startsWith(href) && matches(l.href));
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur-md">

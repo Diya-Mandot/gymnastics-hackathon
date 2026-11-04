@@ -216,7 +216,7 @@ export default function Home() {
             ))}
           </ol>
           <div className="mt-12 text-center">
-            <Link href="/admin/revenue" className="btn btn-line">Test the assumptions in the revenue simulator</Link>
+            <Link href="/admin/revenue" className="btn btn-line">Try the revenue simulator</Link>
             <p className="mt-4 text-xs text-faint">Targets, not guarantees.</p>
           </div>
         </div>

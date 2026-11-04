@@ -1,4 +1,3 @@
-import { AdminTabs } from "@/components/AdminTabs";
 import { PageHero } from "@/components/PageHero";
 import { RevenueIntelligence } from "./RevenueIntelligence";
 
@@ -17,8 +16,7 @@ export default function RevenuePage() {
       >
         Test the assumptions behind the NIL funding model: fans, sponsors, costs and break-even.
       </PageHero>
-      <div className="mx-auto max-w-7xl px-4 pb-24 sm:px-8">
-        <AdminTabs active="revenue" />
+      <div className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-8">
         <RevenueIntelligence />
       </div>
     </>

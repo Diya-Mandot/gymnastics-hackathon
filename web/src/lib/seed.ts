@@ -221,8 +221,8 @@ export const supporterTiers: SupporterTier[] = [
 ];
 
 export const sponsorPackages: SponsorPackage[] = [
-  { id: "spark", name: "Community Spark", price: 5000, priceLabel: "$5,000", perks: ["Athlete story", "One social post", "Sponsor mention", "QR campaign page"] },
-  { id: "routine", name: "Impact Routine", price: 15000, priceLabel: "$15,000", perks: ["Athlete story", "Social kit", "Meet-night QR activation", "Sponsor offer", "Final impact report"] },
-  { id: "partner", name: "Red Rocks Partner", price: 50000, priceLabel: "$50,000", perks: ["Multi-athlete campaign", "Community event", "Campaign recap", "Season report"] },
-  { id: "strategic", name: "Strategic Partner", price: 200000, priceLabel: "$200,000", perks: ["Season-long team partnership", "Meet-night presenting rights", "Athlete content series", "Quarterly impact reports", "Renewal planning"] },
+  { id: "spark", name: "Community Spark", price: 5000, priceLabel: "$5,000", description: "A focused local story and offer.", perks: ["Athlete story", "One social post", "Sponsor mention", "QR campaign page"] },
+  { id: "routine", name: "Impact Routine", price: 15000, priceLabel: "$15,000", description: "A complete athlete-led campaign with measurable activation.", perks: ["Athlete story", "Social kit", "Meet-night QR activation", "Sponsor offer", "Final impact report"] },
+  { id: "partner", name: "Red Rocks Partner", price: 50000, priceLabel: "$50,000", description: "A multi-athlete seasonal community platform.", perks: ["Multi-athlete campaign", "Community event", "Campaign recap", "Season report"] },
+  { id: "strategic", name: "Strategic Partner", price: 200000, priceLabel: "$200,000", description: "A season-long platform partnership concept.", perks: ["Season-long team partnership", "Meet-night presenting rights", "Athlete content series", "Quarterly impact reports", "Renewal planning"] },
 ];

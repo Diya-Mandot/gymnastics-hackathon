@@ -9,7 +9,6 @@ import { compact, timeAgo, usd } from "@/lib/labels";
 import { isSigned, useDeals } from "@/lib/deals";
 import { athleteBySlug, seedFanActions, tasks } from "@/lib/seed";
 import type { Donation, FanAction } from "@/lib/types";
-import { AdminTabs } from "./AdminTabs";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { ChalkArc } from "./ChalkArc";
 import { LiveDot, ProgressBar } from "./CampaignProgress";
@@ -45,7 +44,7 @@ export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
           <Wordmark />
         </div>
       ) : (
-        <AdminTabs active="live" />
+        <div className="pt-10" />
       )}
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>

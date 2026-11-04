@@ -1,5 +1,7 @@
 # Rock the Routine — web
 
+Project overview, environment variables, tests and the demo runbook live in the [root README](../README.md) and [docs/DEMO.md](../docs/DEMO.md). This file covers the app internals.
+
 Next.js 15 (App Router) + Tailwind v4 + Motion. Frontend for the Red Rocks AI Innovation Challenge MVP.
 
 ```bash
@@ -24,7 +26,7 @@ npm run dev                  # http://localhost:3000
 | `/admin/revenue` | Revenue Intelligence (the one revenue dashboard; `/insights` redirects here): scenario simulator (conservative/base/stretch + sliders), funding mix, sponsor funnel, attribution, $2M comparison, live demo records, member-intelligence sample, cost stages, phased rollout |
 | `/portal/[slug]` | Athlete Intelligence: dashboard, AI Brand Studio (media kit + approval), Sponsor Fit reverse matching, deal workspace. Simulated athlete / WRTH manager / creative reviewer roles; Operations Copilot and Approvals tabs |
 | `/cards` | Device-local digital trading-card collection and profile pathway |
-| `/sponsors` | Sponsor Scout, reverse matching, proposal builder, editable CRM, and renewal report |
+| `/sponsors` | Sponsor Engine: Scout, reverse matching, package builder, CRM and renewal report. Its CRM is the shared pipeline in `src/lib/deals.ts`, the same records the portal, admin and revenue pages use |
 | `/demo` | Presenter hub with the QR code |
 | `/demo/admin`, `/demo/athlete/avery` | Chrome-free presenter views |
 

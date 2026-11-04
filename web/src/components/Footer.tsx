@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { publicGroups, teamLinks } from "./NavBar";
 import { Wordmark } from "./Wordmark";
 
 export function Footer() {
@@ -10,7 +11,7 @@ export function Footer() {
 
   return (
     <footer className="border-t border-line">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-8 md:grid-cols-[1.6fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-8 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
         <div>
           <Wordmark />
           <p className="mt-5 max-w-sm font-display text-3xl text-ink">Every routine ends. <em>Its impact should not.</em></p>
@@ -20,26 +21,9 @@ export function Footer() {
             contributions never process a payment.
           </p>
         </div>
-        <FooterCol
-          title="Explore"
-          links={[
-            ["/match", "Get Matched"],
-            ["/athletes", "Athletes"],
-            ["/cards", "Collect cards"],
-            ["/routines", "Impact Routines"],
-          ]}
-        />
-        <FooterCol
-          title="Support"
-          links={[
-            ["/support", "Join the routine"],
-            ["/support/avery", "Back Avery ($10 demo)"],
-            ["/admin", "Admin demo"],
-            ["/sponsors", "Sponsor Revenue Engine"],
-            ["/admin/revenue", "Revenue intelligence"],
-            ["/portal", "Athlete management portal"],
-          ]}
-        />
+        {[...publicGroups, { title: "WRTH team", links: teamLinks }].map((g) => (
+          <FooterCol key={g.title} title={g.title} links={g.links.map((l) => [l.href, l.label] as [string, string])} />
+        ))}
       </div>
     </footer>
   );

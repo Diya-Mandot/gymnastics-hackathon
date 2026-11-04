@@ -119,6 +119,7 @@ export type SponsorPackage = {
   name: string;
   price: number;
   priceLabel: string;
+  description: string;
   perks: string[];
 };
 

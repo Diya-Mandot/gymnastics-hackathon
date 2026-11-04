@@ -1,4 +1,7 @@
-import Image from "next/image";
+import Link from "next/link";
+import { HeroLive } from "@/components/HeroLive";
+import { PageHero } from "@/components/PageHero";
+import { PhotoStrip } from "@/components/PhotoStrip";
 import { athletes, supporterTiers } from "@/lib/seed";
 import { AthleteCard } from "@/components/AthleteCard";
 import { FindYourRoutine } from "./FindYourRoutine";
@@ -8,26 +11,33 @@ export const metadata = { title: "Support" };
 export default function SupportIndex() {
   return (
     <>
-      <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-12 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:pt-16">
-        <div>
-          <p className="text-sm font-semibold text-red-lit">For fans and supporters</p>
-          <h1 className="mt-5 font-display text-[clamp(44px,6vw,80px)] text-ink">
-            Join the routine. Back the athlete. <em>Be part of the impact.</em>
-          </h1>
-          <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted">
-            Give once, join monthly, or just share a note. 100% of contributions support Utah gymnasts through Who Rocks the
-            House.
-          </p>
-        </div>
-        <figure>
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[28px]">
-            <Image src="/images/fans-utes.jpg" alt="Fans in red spelling U-T-E-S with raised arms under arena lights" fill priority sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover" />
+      <PageHero
+        image="/images/fan-signs-2.jpg"
+        alt="A family with handmade Red Rocks signs in the Huntsman Center stands"
+        eyebrow="For fans and supporters"
+        title={<>Back the athlete. <em>Be part of the impact.</em></>}
+        focus="center 35%"
+        size="lg"
+        actions={
+          <>
+            <Link href="/support/avery" className="btn btn-red">Give $10 demo</Link>
+            <a href="#find" className="btn btn-line">Find your routine</a>
+          </>
+        }
+        aside={
+          <div className="lg:w-[360px]">
+            <HeroLive />
           </div>
-          <figcaption className="mt-3 text-right text-xs text-faint">Utah fans under the lights</figcaption>
-        </figure>
+        }
+      >
+        Give once, join monthly, or just share a note. 100% of contributions support Utah gymnasts through Who Rocks the House.
+      </PageHero>
+
+      <section className="pb-14 pt-2">
+        <PhotoStrip />
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-8">
+      <section id="find" className="mx-auto max-w-7xl scroll-mt-16 px-4 pb-20 sm:px-8">
         <FindYourRoutine />
       </section>
 

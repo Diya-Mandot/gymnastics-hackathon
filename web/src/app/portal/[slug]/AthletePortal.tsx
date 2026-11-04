@@ -27,54 +27,61 @@ export function AthletePortal({ athlete, tab }: { athlete: Athlete; tab: PortalT
   const kitStatus = useKitStatus(athlete.slug);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-8">
-      {/* Portal header */}
-      <header className="flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <p className="text-sm font-semibold text-red-lit">Athlete Intelligence</p>
-          <h1 className="mt-2 font-display text-5xl text-ink sm:text-6xl">
-            {athlete.firstName}’s <em>portal.</em>
-          </h1>
-          <p className="mt-2 text-sm text-faint">Simulated roles for the demo · no real login · demo profile data</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="flex items-center gap-2 text-sm text-muted">
-            Athlete
-            <select
-              value={athlete.slug}
-              onChange={(e) => (window.location.href = `/portal/${e.target.value}?tab=${tab}`)}
-              className="input !h-10 !w-auto appearance-none !pr-8"
+    <>
+      {/* Portal hero: the athlete's own photo, faded into the page */}
+      <section className="relative flex min-h-[44svh] items-end overflow-hidden">
+        <AthletePortrait athlete={athlete} className="absolute inset-0" priority credit={false} />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(15_14_13/0.55)_0%,rgb(15_14_13/0.25)_35%,rgb(15_14_13/0.7)_75%,#0f0e0d_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(15_14_13/0.8)_0%,rgb(15_14_13/0.2)_60%,transparent_85%)]" />
+        <header className="relative mx-auto flex w-full max-w-7xl flex-wrap items-end justify-between gap-6 px-4 pb-10 pt-28 sm:px-8">
+          <div>
+            <p className="animate-rise text-sm font-semibold text-red-lit">Athlete Intelligence</p>
+            <h1 className="mt-3 animate-rise font-display text-[clamp(52px,7vw,104px)] text-ink [animation-delay:60ms]">
+              {athlete.firstName}’s <em>portal.</em>
+            </h1>
+            <p className="mt-3 text-sm text-ink/60">Simulated roles · no real login · real Red Rocks photo; name, story &amp; stats are demo content</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="flex items-center gap-2 text-sm text-ink/70">
+              Athlete
+              <select
+                value={athlete.slug}
+                onChange={(e) => (window.location.href = `/portal/${e.target.value}?tab=${tab}`)}
+                className="input !h-10 !w-auto appearance-none !pr-8"
+              >
+                {athletes.map((a) => (
+                  <option key={a.slug} value={a.slug}>{a.name}</option>
+                ))}
+              </select>
+            </label>
+            <RoleSwitch role={role} setRole={setRole} />
+          </div>
+        </header>
+      </section>
+
+      <div className="mx-auto max-w-7xl px-4 pb-24 sm:px-8">
+        <nav className="sticky top-16 z-30 -mx-4 flex gap-6 overflow-x-auto border-b border-line bg-paper/90 px-4 backdrop-blur-md sm:-mx-8 sm:px-8" aria-label="Portal sections">
+          {(Object.keys(TAB_LABELS) as PortalTab[]).map((t) => (
+            <Link
+              key={t}
+              href={`/portal/${athlete.slug}?tab=${t}`}
+              aria-current={t === tab ? "page" : undefined}
+              className={`relative shrink-0 py-3 text-sm font-medium ${t === tab ? "text-ink" : "text-muted hover:text-ink"}`}
             >
-              {athletes.map((a) => (
-                <option key={a.slug} value={a.slug}>{a.name}</option>
-              ))}
-            </select>
-          </label>
-          <RoleSwitch role={role} setRole={setRole} />
+              {TAB_LABELS[t]}
+              {t === tab && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-red" />}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="mt-8">
+          {tab === "dashboard" && <Dashboard athlete={athlete} role={role} deals={deals} kitStatus={kitStatus} />}
+          {tab === "studio" && <BrandStudio athlete={athlete} role={role} />}
+          {tab === "fit" && <SponsorFit athlete={athlete} deals={deals} add={add} />}
+          {tab === "deals" && <DealsBoard athlete={athlete} role={role} deals={deals} update={update} />}
         </div>
-      </header>
-
-      <nav className="mt-8 flex gap-6 overflow-x-auto border-b border-line" aria-label="Portal sections">
-        {(Object.keys(TAB_LABELS) as PortalTab[]).map((t) => (
-          <Link
-            key={t}
-            href={`/portal/${athlete.slug}?tab=${t}`}
-            aria-current={t === tab ? "page" : undefined}
-            className={`relative shrink-0 py-3 text-sm font-medium ${t === tab ? "text-ink" : "text-muted hover:text-ink"}`}
-          >
-            {TAB_LABELS[t]}
-            {t === tab && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-red" />}
-          </Link>
-        ))}
-      </nav>
-
-      <div className="mt-8">
-        {tab === "dashboard" && <Dashboard athlete={athlete} role={role} deals={deals} kitStatus={kitStatus} />}
-        {tab === "studio" && <BrandStudio athlete={athlete} role={role} />}
-        {tab === "fit" && <SponsorFit athlete={athlete} deals={deals} add={add} />}
-        {tab === "deals" && <DealsBoard athlete={athlete} role={role} deals={deals} update={update} />}
       </div>
-    </div>
+    </>
   );
 }
 

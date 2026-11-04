@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AthletePortrait } from "@/components/AthletePortrait";
 import { FeatureBadge } from "@/components/Badges";
 import { ChalkArc } from "@/components/ChalkArc";
+import { PageHero } from "@/components/PageHero";
 import { MatchRing, ScoreBreakdown } from "@/components/ScoreBreakdown";
 import { audienceLabels, availabilityLabel, campaignTypeLabels, causeLabels, compact, lower, usd } from "@/lib/labels";
 import { topMatches, type MatchResult, type SponsorBrief } from "@/lib/match";
@@ -87,69 +88,74 @@ export function MatchWizard({ athletes }: { athletes: Athlete[] }) {
   if (results) {
     const b = brief as SponsorBrief;
     return (
-      <div className="mx-auto max-w-7xl px-4 pb-24 pt-14 sm:px-8">
-        <p className="text-sm font-semibold text-red-lit">Your best matches</p>
-        <h1 className="mt-3 max-w-4xl font-display text-5xl text-ink sm:text-7xl">Three athletes whose stories <em>fit yours.</em></h1>
-        <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted">
+      <>
+        <PageHero
+          image="/images/salt-flats-leap.jpg"
+          alt="A gymnast in a red leotard leaping above the Bonneville Salt Flats"
+          eyebrow="Your best matches"
+          title={<>Three athletes whose stories <em>fit yours.</em></>}
+          focus="center 40%"
+        >
           Based on your goal to <span className="text-ink">{lower(b.goal)}</span>, reaching{" "}
           <span className="text-ink">{lower(audienceLabels[b.audience])}</span>, and supporting{" "}
           <span className="text-ink">{lower(causeLabels[b.cause])}</span>. Scored on cause, audience, format, budget, and
           availability, not follower count.
-        </p>
+        </PageHero>
+        <div className="mx-auto max-w-7xl px-4 pb-24 sm:px-8">
+          <div className="grid gap-5 lg:grid-cols-3">
+            {results.map((r, rank) => (
+              <ResultCard
+                key={r.athlete.slug}
+                r={r}
+                rank={rank + 1}
+                comparing={compare.includes(r.athlete.slug)}
+                onCompare={() =>
+                  setCompare((c) => (c.includes(r.athlete.slug) ? c.filter((s) => s !== r.athlete.slug) : [...c, r.athlete.slug]))
+                }
+              />
+            ))}
+          </div>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-3">
-          {results.map((r, rank) => (
-            <ResultCard
-              key={r.athlete.slug}
-              r={r}
-              rank={rank + 1}
-              comparing={compare.includes(r.athlete.slug)}
-              onCompare={() =>
-                setCompare((c) => (c.includes(r.athlete.slug) ? c.filter((s) => s !== r.athlete.slug) : [...c, r.athlete.slug]))
-              }
-            />
-          ))}
-        </div>
+          <AnimatePresence>
+            {compare.length >= 2 && (
+              <motion.section
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="card mt-8 overflow-x-auto p-6"
+                aria-label="Compare athletes"
+              >
+                <h2 className="font-display text-3xl text-ink">Side by side</h2>
+                <CompareTable rows={results.filter((r) => compare.includes(r.athlete.slug))} />
+              </motion.section>
+            )}
+          </AnimatePresence>
 
-        <AnimatePresence>
-          {compare.length >= 2 && (
-            <motion.section
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="card mt-8 overflow-x-auto p-6"
-              aria-label="Compare athletes"
+          <div className="mt-10 flex flex-wrap gap-3">
+            <button
+              onClick={() => {
+                setResults(null);
+                setI(0);
+              }}
+              className="btn btn-line"
             >
-              <h2 className="font-display text-3xl text-ink">Side by side</h2>
-              <CompareTable rows={results.filter((r) => compare.includes(r.athlete.slug))} />
-            </motion.section>
-          )}
-        </AnimatePresence>
-
-        <div className="mt-10 flex flex-wrap gap-3">
-          <button
-            onClick={() => {
-              setResults(null);
-              setI(0);
-            }}
-            className="btn btn-line"
-          >
-            Edit my brief
-          </button>
-          <Link href="/athletes" className="btn btn-line">Browse everyone instead</Link>
+              Edit my brief
+            </button>
+            <Link href="/athletes" className="btn btn-line">Browse everyone instead</Link>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
     <div className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[34%] xl:block">
-        <Image src="/images/arena-scoreboard.jpg" alt="" fill sizes="34vw" className="object-cover object-[30%_center]" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[38%] lg:block">
+        <Image src="/images/arena-scoreboard.jpg" alt="" fill priority sizes="38vw" className="object-cover object-[30%_center]" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#0f0e0d_0%,rgb(15_14_13/0.4)_45%,rgb(15_14_13/0.2)_100%)]" />
         <ChalkArc className="absolute -left-24 top-24 h-[320px] w-[90%] text-red-lit/50" dashed />
       </div>
-      <div className="relative mx-auto max-w-3xl px-4 pb-28 pt-14 sm:px-8 xl:ml-[max(2rem,calc((100vw-80rem)/2+2rem))] xl:mr-0">
+      <div className="relative mx-auto max-w-3xl px-4 pb-28 pt-14 sm:px-8 lg:ml-[max(2rem,calc((100vw-80rem)/2+2rem))] lg:mr-0 lg:min-h-[calc(100svh-70px)] lg:max-w-[58%] xl:max-w-3xl">
         <p className="text-sm font-semibold text-red-lit">Get matched · for businesses</p>
         <div className="mt-6 flex items-center gap-4">
           <div className="flex flex-1 gap-1.5" aria-hidden="true">

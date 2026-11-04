@@ -37,11 +37,7 @@ export function RevenueIntelligence() {
     <div>
       <header className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p className="text-sm font-semibold text-red-lit">Revenue intelligence</p>
-          <h1 className="mt-2 font-display text-5xl text-ink sm:text-6xl">
-            Where new NIL money <em>comes from.</em>
-          </h1>
-          <p className="mt-3 max-w-2xl text-muted">
+          <p className="max-w-2xl text-muted">
             Every input is a hypothetical planning assumption, not verified WRTH data. Existing supporter revenue is shown but
             never counted as new. Signed agreements and collected cash are kept separate.
           </p>

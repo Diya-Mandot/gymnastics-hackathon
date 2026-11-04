@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { PageHero } from "@/components/PageHero";
 import { athleteBySlug, sponsorPackages } from "@/lib/seed";
 import { RoutineBuilder } from "./RoutineBuilder";
 import { Workspace } from "./Workspace";
@@ -11,26 +12,45 @@ export default async function RoutinesPage({ searchParams }: { searchParams: Pro
   const pkg = sponsorPackages.find((p) => p.id === sp.package) ?? sponsorPackages.find((p) => p.id === "routine")!;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-24 pt-14 sm:px-8">
-      <p className="text-sm font-semibold text-red-lit">Impact Routines</p>
-      <h1 className="mt-3 max-w-4xl font-display text-6xl text-ink sm:text-7xl">Fund a campaign that <em>means something.</em></h1>
-      <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">
+    <>
+      <PageHero
+        image="/images/team-huddle.jpg"
+        alt="Red Rocks gymnasts huddled with their coaches during a meet"
+        eyebrow="Impact Routines"
+        title={<>Fund a campaign that <em>means something.</em></>}
+        focus="center 35%"
+        actions={
+          <>
+            <a href="#build" className="btn btn-red">Build a campaign</a>
+            <a href="#ai-brief" className="btn btn-line">Draft one with AI</a>
+          </>
+        }
+      >
         Every paid partnership becomes an Impact Routine: an athlete story, a community cause, fan participation, Adobe-made
         creative, and a final impact report.
-      </p>
+      </PageHero>
 
-      <div className="relative mt-10 aspect-[16/7] overflow-hidden rounded-[24px] sm:aspect-[16/5]">
-        <Image src="/images/dumke-dedication.jpg" alt="Fans and families at the Dumke Gymnastics Center dedication" fill priority sizes="100vw" className="object-cover object-[center_55%]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-paper/50 to-transparent" />
+      <div id="build" className="mx-auto max-w-7xl scroll-mt-16 px-4 sm:px-8">
+        <RoutineBuilder key={`${athlete.slug}-${pkg.id}`} athlete={athlete} initialPackage={pkg.id} autoAi={sp.ai === "1"} />
       </div>
 
-      <RoutineBuilder key={`${athlete.slug}-${pkg.id}`} athlete={athlete} initialPackage={pkg.id} autoAi={sp.ai === "1"} />
+      <section className="relative mt-24 flex min-h-[46svh] items-center overflow-hidden">
+        <Image src="/images/fan-signs.jpg" alt="Young fans holding Red Rocks signs at a meet" fill sizes="100vw" className="object-cover object-[center_40%]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(15_14_13/0.85)_0%,rgb(15_14_13/0.35)_60%,rgb(15_14_13/0.15)_100%)]" />
+        <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-8">
+          <p className="max-w-[15ch] font-display text-[clamp(40px,5vw,72px)] text-white">
+            Not a logo on a banner. <em>A routine fans join.</em>
+          </p>
+        </div>
+      </section>
 
-      <section className="mt-24">
+      <section className="mx-auto max-w-7xl px-4 pb-24 pt-20 sm:px-8">
         <p className="text-sm font-semibold text-red-lit">Live campaign workspace</p>
-        <h2 className="mt-3 font-display text-5xl text-ink sm:text-6xl">Confidence Starts Here</h2>
+        <h2 className="mt-3 font-display text-5xl text-ink sm:text-6xl">
+          Confidence <em>Starts Here</em>
+        </h2>
         <Workspace />
       </section>
-    </div>
+    </>
   );
 }

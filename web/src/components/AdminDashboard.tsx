@@ -38,7 +38,7 @@ export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
   const featured = lastDonation ?? activity[0] ?? null;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-8">
+    <div className={`mx-auto max-w-7xl px-4 pb-20 sm:px-8 ${presenter ? "pt-10" : ""}`}>
       {presenter ? (
         <div className="mb-10">
           <Wordmark />
@@ -52,7 +52,7 @@ export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
             <LiveDot label={ready ? "Live" : "Connecting"} />
             {isMockSource() && <span className="text-xs text-faint">Mock data · syncs across tabs</span>}
           </div>
-          <h1 className="mt-3 font-display text-5xl text-ink sm:text-6xl">WRTH Admin</h1>
+          {presenter && <h1 className="mt-3 font-display text-5xl text-ink sm:text-6xl">WRTH <em>Admin</em></h1>}
           <p className="mt-2 text-muted">{campaign.name} · {campaign.partner}</p>
         </div>
         <div className="flex items-center gap-2">
@@ -249,7 +249,7 @@ function Kpi({ label, value, sub, children }: { label: string; value: React.Reac
 
 function Panel({ title, right, children }: { title: string; right?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <section className="card p-6">
+    <section className="card min-w-0 p-6">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="font-display text-xl text-ink">{title}</h2>
         {right}

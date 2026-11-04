@@ -6,10 +6,12 @@ import { ChalkArc } from "./ChalkArc";
  * Athlete image. Uses the organizer-supplied Red Rocks photo when set (always with a
  * visible demo-content credit), otherwise an initials square.
  */
-export function AthletePortrait({ athlete, className = "", priority = false }: {
+export function AthletePortrait({ athlete, className = "", priority = false, credit = true }: {
   athlete: Athlete;
   className?: string;
   priority?: boolean;
+  /** Hide the on-photo credit when the surrounding layout states it in text instead. */
+  credit?: boolean;
 }) {
   // Callers either pass `absolute inset-0` or an explicit size; only default to relative for the latter.
   const position = /\babsolute\b/.test(className) ? "" : "relative";
@@ -28,9 +30,9 @@ export function AthletePortrait({ athlete, className = "", priority = false }: {
           style={{ objectPosition: athlete.photoFocus ?? "50% 30%" }}
           sizes="(max-width: 768px) 100vw, 40vw"
         />
-        <span className="absolute bottom-2.5 right-2.5 hidden rounded-full bg-paper/80 px-2.5 py-1 text-[10px] font-medium text-ink/80 backdrop-blur @[260px]:block">
-          Real Red Rocks photo · name, story &amp; stats are demo content
-        </span>
+        {credit && <span className="absolute right-2.5 top-2.5 hidden rounded-full bg-paper/80 px-2.5 py-1 text-[10px] font-medium text-ink/80 backdrop-blur @[220px]:block">
+          Real photo · demo profile
+        </span>}
       </div>
     );
   }

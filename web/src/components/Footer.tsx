@@ -37,6 +37,7 @@ export function Footer() {
             ["/admin", "Admin demo"],
             ["/sponsors", "Sponsor Revenue Engine"],
             ["/insights", "Revenue intelligence"],
+            ["/portal", "Athlete management portal"],
           ]}
         />
       </div>

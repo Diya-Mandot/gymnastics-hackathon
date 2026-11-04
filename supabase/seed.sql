@@ -160,3 +160,26 @@ insert into public.revenue_events (opportunity_id, event_type, amount, is_collec
 select id, 'collected_sponsorship', 25000, true, true, 'Illustrative partial collected funding.'
 from public.opportunities where title = 'Wasatch Peak Wellness Partnership'
   and not exists (select 1 from public.revenue_events where notes = 'Illustrative partial collected funding.');
+
+insert into public.content_assets (athlete_id, campaign_id, title, asset_type, status)
+select a.id, c.id, 'Instagram Reel: Confidence Starts Here', 'reel', 'pending_approval'
+from public.athletes a cross join public.campaigns c
+where a.slug = 'avery-davis' and c.slug = 'confidence-starts-here'
+  and not exists (select 1 from public.content_assets where title = 'Instagram Reel: Confidence Starts Here');
+
+insert into public.content_assets (athlete_id, campaign_id, title, asset_type, status)
+select a.id, c.id, 'Meet-night sponsor offer card', 'offer_card', 'pending_approval'
+from public.athletes a cross join public.campaigns c
+where a.slug = 'avery-davis' and c.slug = 'confidence-starts-here'
+  and not exists (select 1 from public.content_assets where title = 'Meet-night sponsor offer card');
+
+insert into public.approval_requests (athlete_id, content_asset_id, requested_by, status)
+select a.id, asset.id, 'WRTH manager', 'pending'
+from public.athletes a join public.content_assets asset on asset.athlete_id = a.id
+where a.slug = 'avery-davis' and asset.title = 'Instagram Reel: Confidence Starts Here'
+  and not exists (select 1 from public.approval_requests r where r.content_asset_id = asset.id);
+
+insert into public.opportunity_tasks (opportunity_id, title, owner_role, due_date, status)
+select id, 'Approve social creative', 'athlete', current_date + 1, 'awaiting_approval'
+from public.opportunities where title = 'BrightPath Confidence Starts Here'
+  and not exists (select 1 from public.opportunity_tasks t where t.opportunity_id = public.opportunities.id and t.title = 'Approve social creative');

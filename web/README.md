@@ -35,7 +35,7 @@ Set `ANTHROPIC_API_KEY` (locally in `.env.local`, and in the Vercel project sett
 
 ## Revised-plan scope
 
-This branch implements the public fan experience and Sponsorship Revenue Engine as a fictional competition MVP. Sponsor targets, campaign results, financial metrics, cards, and CRM records are demo data. No external research, email, payment, agreement signing, or automated compliance decision occurs. The Athlete Intelligence and Management Portal is deliberately excluded.
+This branch implements the public fan experience, Athlete Intelligence and Management Portal, and Sponsorship Revenue Engine as a fictional competition MVP. Sponsor targets, campaign results, financial metrics, cards, CRM records, athlete profiles, approvals, and brand-kit outputs are demo data. No external research, email, payment, agreement signing, or automated compliance decision occurs.
 
 ## Live data
 

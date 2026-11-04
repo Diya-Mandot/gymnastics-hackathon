@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+@theme {
+  /* Warm near-black, flat Utah red. Names are semantic: paper = page, surface = card, ink = text. */
+  --color-red: #cc0000;
+  --color-red-lit: #ff4a3d; /* small red text on dark, where #cc0000 is too low-contrast */
+  --color-red-dark: #ff8f85; /* text on red-soft */
+  --color-red-soft: #3a1513;
+  --color-paper: #0f0e0d;
+  --color-surface: #181716;
+  --color-line: #2b2927;
+  --color-sand: #2e2b28;
+  --color-sand-soft: #23211f;
+  --color-ink: #f3efe8;
+  --color-muted: #a39d94;
+  --color-faint: #716c65;
+  --color-green: #62c29d;
+
+  --font-sans: var(--font-geist), system-ui, sans-serif;
+  --font-display: var(--font-instrument), Georgia, serif;
+
+  --animate-live: live 2s ease-in-out infinite;
+  --animate-rise: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-marquee: marquee 60s linear infinite;
+
+  @keyframes live {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+html { scroll-behavior: smooth; color-scheme: dark; }
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-synthesis: none; /* Instrument Serif ships one weight; never fake-bold it */
+    letter-spacing: -0.012em;
+    line-height: 0.95;
+  }
+  .font-display em {
+    font-style: italic;
+    color: var(--color-red-lit);
+    padding-right: 0.04em;
+  }
+  .label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--color-muted);
+  }
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 13px 22px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .btn-red { background: var(--color-red); color: #fff; }
+  .btn-red:hover:not(:disabled) { background: #b00000; }
+  .btn-line { background: var(--color-surface); color: var(--color-ink); border: 1px solid var(--color-line); }
+  .btn-line:hover { border-color: var(--color-ink); }
+  .btn-ink { background: var(--color-ink); color: var(--color-paper); }
+  .btn-ink:hover { background: #fff; }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--color-sand-soft);
+    color: var(--color-ink);
+  }
+  .input {
+    height: 50px;
+    width: 100%;
+    border-radius: 999px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    padding: 0 18px;
+    color: var(--color-ink);
+    outline: none;
+  }
+  .input:focus { border-color: var(--color-ink); }
+  .input::placeholder { color: var(--color-faint); }
+  .link { text-decoration: underline; text-decoration-color: var(--color-red-lit); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-red-lit);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

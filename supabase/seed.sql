@@ -117,8 +117,46 @@ insert into public.sponsor_prospects (business_name, category, description, loca
 select v.business_name, v.category, v.description, v.location, v.known_connection, v.estimated_budget, v.status
 from (values
   ('BrightPath Family Wellness (fictional)', 'Wellness', 'Family wellness business aligned to youth confidence.', 'Salt Lake City, UT', 'Demo warm introduction', 15000::numeric, 'qualified'),
-  ('Summit Smiles Dental (fictional)', 'Dental', 'Local family dental practice seeking a community partnership.', 'Salt Lake City, UT', null::text, 5000::numeric, 'researching')
+  ('Summit Smiles Dental (fictional)', 'Dental', 'Local family dental practice seeking a community partnership.', 'Salt Lake City, UT', null::text, 5000::numeric, 'researching'),
+  ('Wasatch Peak Credit Union (fictional)', 'Financial services', 'Utah financial-services business seeking a family and wellness activation.', 'Utah', 'Demo alumni referral', 50000::numeric, 'qualified')
 ) as v(business_name, category, description, location, known_connection, estimated_budget, status)
 where not exists (
   select 1 from public.sponsor_prospects p where p.business_name = v.business_name
 );
+
+insert into public.trading_cards (athlete_id, slug, qr_route)
+select id, 'card-' || slug, '/athletes/' || regexp_replace(slug, '-(davis|torres|patel|lee)$', '')
+from public.athletes
+on conflict (slug) do update set qr_route = excluded.qr_route;
+
+insert into public.opportunities (sponsor_prospect_id, athlete_id, title, relationship_owner, proposed_amount, stage, next_action, follow_up_date, notes)
+select p.id, a.id, 'BrightPath Confidence Starts Here', 'WRTH partnerships', 15000, 'Proposal', 'Review $15K proposal', current_date + 2, 'Illustrative demo opportunity.'
+from public.sponsor_prospects p cross join public.athletes a
+where p.business_name = 'BrightPath Family Wellness (fictional)' and a.slug = 'avery-davis'
+  and not exists (select 1 from public.opportunities o where o.title = 'BrightPath Confidence Starts Here');
+
+insert into public.opportunities (sponsor_prospect_id, athlete_id, title, relationship_owner, proposed_amount, stage, next_action, follow_up_date, notes)
+select p.id, a.id, 'Wasatch Peak Wellness Partnership', 'WRTH partnerships', 50000, 'Agreement', 'Confirm signature and kickoff', current_date + 7, 'Illustrative signed-agreement demo record.'
+from public.sponsor_prospects p cross join public.athletes a
+where p.business_name = 'Wasatch Peak Credit Union (fictional)' and a.slug = 'jordan-lee'
+  and not exists (select 1 from public.opportunities o where o.title = 'Wasatch Peak Wellness Partnership');
+
+insert into public.agreements (opportunity_id, status, signed_at, proposed_amount)
+select id, 'signed', now(), proposed_amount from public.opportunities
+where title = 'Wasatch Peak Wellness Partnership'
+  and not exists (select 1 from public.agreements a where a.opportunity_id = public.opportunities.id);
+
+insert into public.revenue_events (campaign_id, event_type, amount, is_collected, is_incremental, notes)
+select id, 'existing_supporter_baseline', 99750, true, false, 'Illustrative existing-revenue baseline; not incremental funding.'
+from public.campaigns where slug = 'confidence-starts-here'
+  and not exists (select 1 from public.revenue_events where notes = 'Illustrative existing-revenue baseline; not incremental funding.');
+
+insert into public.revenue_events (opportunity_id, event_type, amount, is_collected, is_incremental, notes)
+select id, 'signed_agreement', proposed_amount, false, true, 'Illustrative signed agreement; separate from collection.'
+from public.opportunities where title = 'Wasatch Peak Wellness Partnership'
+  and not exists (select 1 from public.revenue_events where notes = 'Illustrative signed agreement; separate from collection.');
+
+insert into public.revenue_events (opportunity_id, event_type, amount, is_collected, is_incremental, notes)
+select id, 'collected_sponsorship', 25000, true, true, 'Illustrative partial collected funding.'
+from public.opportunities where title = 'Wasatch Peak Wellness Partnership'
+  and not exists (select 1 from public.revenue_events where notes = 'Illustrative partial collected funding.');

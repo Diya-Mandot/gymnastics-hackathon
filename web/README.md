@@ -21,6 +21,9 @@ npm run dev                  # http://localhost:3000
 | `/support` | Fan/supporter landing with Find Your Routine |
 | `/support/[slug]` | **Phone QR flow**: pick amount → Give $10 Demo → thank-you + I Rocked the Routine card |
 | `/admin` | WRTH admin dashboard with the live transaction reveal and reset |
+| `/cards` | Device-local digital trading-card collection and profile pathway |
+| `/sponsors` | Sponsor Scout, reverse matching, proposal builder, editable CRM, and renewal report |
+| `/insights` | Member-intelligence sample, revenue scenario simulator, break-even, costs, and deployment roadmap |
 | `/demo` | Presenter hub with the QR code |
 | `/demo/admin`, `/demo/athlete/avery` | Chrome-free presenter views |
 
@@ -29,6 +32,10 @@ npm run dev                  # http://localhost:3000
 `/routines` has a "Draft with AI" panel (also reachable from each Get Matched result). `POST /api/brief` sends the athlete's profile, Story Seed transcript, sponsor brief and package to Claude Opus 5.5 (low effort, streaming, server-side refusal fallback) and streams back a campaign title, fit rationale, three captions, content plan, task list and sponsor email. Everything is labelled as a draft the athlete approves; nothing is posted or emailed.
 
 Set `ANTHROPIC_API_KEY` (locally in `.env.local`, and in the Vercel project settings) for live generation. Without a key, or if the API call fails to start, the route streams a deterministic sample and the panel labels it "Offline sample".
+
+## Revised-plan scope
+
+This branch implements the public fan experience and Sponsorship Revenue Engine as a fictional competition MVP. Sponsor targets, campaign results, financial metrics, cards, and CRM records are demo data. No external research, email, payment, agreement signing, or automated compliance decision occurs. The Athlete Intelligence and Management Portal is deliberately excluded.
 
 ## Live data
 

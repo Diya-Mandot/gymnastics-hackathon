@@ -18,7 +18,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=server-only-secret
 ```
 
-Never expose `SUPABASE_SERVICE_ROLE_KEY` in a client component, a public route, or a committed environment file.
+Never expose `SUPABASE_SERVICE_ROLE_KEY` in a client component, a public route, or a committed environment file. For the frontend's protected demo reset, also set a server-only `DEMO_RESET_SECRET`; the admin screen asks the presenter for it before calling the reset route.
 
 ## Frontend integration
 
@@ -35,7 +35,7 @@ Copy/import `client/rockTheRoutine.ts` after installing `@supabase/supabase-js` 
 | Admin dashboard | `getAdminDashboard(client)` |
 | Live updates | `subscribeToCampaignUpdates(client, campaignId, handler)` |
 
-For the QR demo, call `createDemoDonation(client, 'confidence-starts-here', 'Demo Judge')`. The UI must visibly state: **“Demo contribution - no payment will be processed.”** The response returns the updated total and supporter count; the separate admin display should subscribe to Realtime to show the change without a refresh.
+For the QR demo, call `createDemoDonation(client, 'confidence-starts-here', 'Demo Judge')`. The UI must visibly state: **“Demo contribution - no payment will be processed.”** The response returns the updated total and supporter count; the separate admin display should subscribe to Realtime to show the change without a refresh. The Next.js app's `web/src/lib/live/supabase.ts` is the canonical adapter for this schema.
 
 ## Reset control
 

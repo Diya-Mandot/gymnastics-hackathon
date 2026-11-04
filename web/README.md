@@ -39,12 +39,12 @@ All live state goes through `src/lib/live` (`LiveSource`):
 
 ### Backend contract (for Prachi)
 
-The Supabase adapter (`src/lib/live/supabase.ts`) expects:
+The Supabase adapter (`src/lib/live/supabase.ts`) is aligned with the migrations in the repository's root `supabase/` folder. Apply those migrations and `supabase/seed.sql`, then set `NEXT_PUBLIC_DATA_SOURCE=supabase` plus the three Supabase environment variables in `.env.local`.
 
-- `campaigns` table: `id, slug, name, athlete_slug, goal, raised, supporters, business_funding, fan_contributions`. Seed row slug `confidence-starts-here` at 15000 / 8240 / 186 / 6500 / 1740.
-- `donations` table: `id, created_at, supporter_name, athlete_slug, athlete_name, campaign_id, campaign_name, amount, support_type, thank_you_pack, status`.
-- `rpc give_demo(p_campaign_slug, p_athlete_slug, p_amount, p_supporter_name, p_support_type)`: inserts a mock donation and bumps the campaign totals in one transaction. **Never calls a payment provider.**
-- `rpc reset_demo()`: restores the seeded metrics.
+- `campaigns` table: `id, slug, name, goal, current_raised, supporter_count, business_funding, fan_contributions` plus its linked athlete.
+- `donations` table: `id, created_at, supporter_name, campaign_id, athlete_id, amount, support_type, thank_you_pack_sent`.
+- `rpc create_demo_donation(p_campaign_slug, p_supporter_name, p_amount)`: inserts a mock donation and bumps campaign totals atomically. **It never calls a payment provider.**
+- `rpc reset_confidence_starts_here_demo()`: restores seeded metrics; it is server/service-role only. The admin UI calls `/api/demo/reset`, which requires `DEMO_RESET_SECRET`.
 - Realtime enabled on both tables (the client listens to `INSERT` on `donations` and `UPDATE` on `campaigns`).
 
 Athletes, tiers, packages, tasks and prospects are static in `src/lib/seed.ts` for now. The sponsor matcher (`src/lib/match.ts`) runs client-side with the plan's weights (cause 35, audience 25, format 20, budget 10, availability 10). The default brief returns Avery 94%, Mia 89%, Sofia 85%.

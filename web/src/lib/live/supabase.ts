@@ -1,121 +1,131 @@
 import { createClient } from "@supabase/supabase-js";
-import { seedCampaign } from "../seed";
+import { athleteBySlug, athletes, seedCampaign } from "../seed";
 import type { Campaign, Donation, LiveState } from "../types";
 import type { GiveInput, LiveSource } from "./types";
 
-/*
- * Expected backend contract (confirm with Prachi):
- *   table campaigns  (id, slug, name, athlete_slug, goal, raised, supporters,
- *                     business_funding, fan_contributions)
- *   table donations  (id, created_at, supporter_name, athlete_slug, athlete_name,
- *                     campaign_id, campaign_name, amount, support_type,
- *                     thank_you_pack, status)
- *   rpc give_demo(p_campaign_slug, p_athlete_slug, p_amount, p_supporter_name, p_support_type)
- *       -> inserts a mock donation + bumps campaign totals atomically. No payments.
- *   rpc reset_demo() -> restores seeded metrics.
- *   Realtime enabled on both tables.
- */
-
+/** Adapter for the SQL migrations in /supabase. All donations are mock demo transactions. */
 type CampaignRow = {
   id: string;
   slug: string;
   name: string;
-  athlete_slug: string;
-  goal: number;
-  raised: number;
-  supporters: number;
-  business_funding: number;
-  fan_contributions: number;
+  goal: number | string;
+  current_raised: number | string;
+  supporter_count: number;
+  business_funding: number | string;
+  fan_contributions: number | string;
+  athletes: { slug: string; name: string } | null;
 };
 
 type DonationRow = {
   id: string;
   created_at: string;
   supporter_name: string;
-  athlete_slug: string;
-  athlete_name: string;
-  campaign_name: string;
-  amount: number;
-  support_type: Donation["supportType"];
-  thank_you_pack: Donation["thankYouPack"];
-  status: Donation["status"];
+  amount: number | string;
+  support_type: "one_time" | "monthly" | "celebration_video";
+  thank_you_pack_sent: boolean;
+  athletes: { slug: string; name: string } | null;
+  campaigns: { name: string } | null;
 };
 
-const toCampaign = (r: CampaignRow): Campaign => ({
-  ...seedCampaign, // sponsor/partner/supports copy is static for the demo
-  id: r.id,
-  slug: r.slug,
-  name: r.name,
-  athleteSlug: r.athlete_slug,
-  goal: Number(r.goal),
-  raised: Number(r.raised),
-  supporters: r.supporters,
-  businessFunding: Number(r.business_funding),
-  fanContributions: Number(r.fan_contributions),
+const uiSlug = (source: { slug: string; name: string } | null) =>
+  athletes.find((athlete) => athlete.name === source?.name)?.slug ?? source?.slug ?? seedCampaign.athleteSlug;
+
+const toCampaign = (row: CampaignRow): Campaign => ({
+  ...seedCampaign,
+  id: row.id,
+  slug: row.slug,
+  name: row.name,
+  athleteSlug: uiSlug(row.athletes),
+  goal: Number(row.goal),
+  raised: Number(row.current_raised),
+  supporters: row.supporter_count,
+  businessFunding: Number(row.business_funding),
+  fanContributions: Number(row.fan_contributions),
 });
 
-const toDonation = (r: DonationRow): Donation => ({
-  id: r.id,
-  createdAt: r.created_at,
-  supporterName: r.supporter_name,
-  athleteSlug: r.athlete_slug,
-  athleteName: r.athlete_name,
-  campaignName: r.campaign_name,
-  amount: Number(r.amount),
-  supportType: r.support_type,
-  thankYouPack: r.thank_you_pack,
-  status: r.status,
-});
+const supportType = (type: DonationRow["support_type"]): Donation["supportType"] => {
+  if (type === "monthly") return "Monthly supporter";
+  if (type === "celebration_video") return "Impact Champion";
+  return "One-time supporter";
+};
+
+const toDonation = (row: DonationRow): Donation => {
+  const athleteSlug = uiSlug(row.athletes);
+  return {
+    id: row.id,
+    createdAt: row.created_at,
+    supporterName: row.supporter_name,
+    athleteSlug,
+    athleteName: row.athletes?.name ?? athleteBySlug(athleteSlug)?.name ?? "Demo athlete",
+    campaignName: row.campaigns?.name ?? seedCampaign.name,
+    amount: Number(row.amount),
+    supportType: supportType(row.support_type),
+    thankYouPack: row.thank_you_pack_sent ? "Sent" : "Queued",
+    status: "Received",
+  };
+};
 
 export function createSupabaseSource(url: string, anonKey: string): LiveSource {
   const db = createClient(url, anonKey);
   let current: LiveState | null = null;
 
   async function load(): Promise<LiveState> {
-    const [{ data: c, error: ce }, { data: d, error: de }] = await Promise.all([
-      db.from("campaigns").select("*").eq("slug", seedCampaign.slug).single<CampaignRow>(),
-      db.from("donations").select("*").order("created_at", { ascending: false }).limit(50),
+    const [{ data: campaign, error: campaignError }, { data: donations, error: donationsError }] = await Promise.all([
+      db
+        .from("campaigns")
+        .select("id, slug, name, goal, current_raised, supporter_count, business_funding, fan_contributions, athletes(slug, name)")
+        .eq("slug", seedCampaign.slug)
+        .single<CampaignRow>(),
+      db
+        .from("donations")
+        .select("id, created_at, supporter_name, amount, support_type, thank_you_pack_sent, athletes(slug, name), campaigns(name)")
+        .order("created_at", { ascending: false })
+        .limit(50),
     ]);
-    if (ce) throw ce;
-    if (de) throw de;
-    current = { campaign: toCampaign(c), activity: (d as DonationRow[]).map(toDonation) };
+    if (campaignError) throw campaignError;
+    if (donationsError) throw donationsError;
+    current = { campaign: toCampaign(campaign), activity: (donations as DonationRow[]).map(toDonation) };
     return current;
   }
 
   return {
     load,
-    async giveDemo({ athleteSlug, amount, supporterName, supportType }: GiveInput) {
-      const { error } = await db.rpc("give_demo", {
+    async giveDemo({ amount, supporterName }: GiveInput) {
+      const { error } = await db.rpc("create_demo_donation", {
         p_campaign_slug: seedCampaign.slug,
-        p_athlete_slug: athleteSlug,
-        p_amount: amount,
         p_supporter_name: supporterName.trim() || "Demo Judge",
-        p_support_type: supportType ?? "One-time supporter",
+        p_amount: amount,
       });
       if (error) throw error;
       const state = await load();
       return { state, donation: state.activity[0] };
     },
-    subscribe(cb) {
-      const ch = db
-        .channel("rtr-live")
-        .on("postgres_changes", { event: "INSERT", schema: "public", table: "donations" }, async (p) => {
+    subscribe(callback) {
+      const channel = db
+        .channel("rock-the-routine-live")
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "donations" }, async () => {
           const state = await load();
-          cb({ state, donation: toDonation(p.new as DonationRow) });
+          callback({ state, donation: state.activity[0] });
         })
-        .on("postgres_changes", { event: "UPDATE", schema: "public", table: "campaigns" }, (p) => {
-          if (!current) return;
-          current = { ...current, campaign: toCampaign(p.new as CampaignRow) };
-          cb({ state: current });
+        .on("postgres_changes", { event: "UPDATE", schema: "public", table: "campaigns" }, async () => {
+          const state = await load();
+          callback({ state });
         })
         .subscribe();
       return () => {
-        db.removeChannel(ch);
+        db.removeChannel(channel);
       };
     },
-    async reset() {
-      const { error } = await db.rpc("reset_demo");
-      if (error) throw error;
+    async reset(passcode) {
+      const response = await fetch("/api/demo/reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passcode }),
+      });
+      if (!response.ok) {
+        const body = (await response.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error ?? "Unable to reset the demo.");
+      }
       return load();
     },
   };

@@ -18,5 +18,5 @@ export interface LiveSource {
   load(): Promise<LiveState>;
   giveDemo(input: GiveInput): Promise<LiveEvent>;
   subscribe(cb: (e: LiveEvent) => void): () => void;
-  reset(): Promise<LiveState>;
+  reset(passcode?: string): Promise<LiveState>;
 }

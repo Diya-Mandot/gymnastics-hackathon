@@ -2,69 +2,70 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import type { Audience, Group } from "@/lib/audience";
-import { authClient, authConfigured, loadAuthProfile, type AppRole, type AuthProfile } from "@/lib/auth";
+import type { AppRole, AuthProfile } from "@/lib/auth";
 
-// The one sign-in for the whole site: Supabase Auth (accounts made at /join).
-// Each account's role decides which group's view and navigation the person gets.
+// The one sign-in for the whole site: a quick sign-up (name + role, no password), remembered on
+// this device. Each person's role decides which group's view and navigation they get.
 
-const groupForRole: Record<AppRole, Group> = { fan: "supporter", business: "business", athlete: "athlete", staff: "team" };
+export const AUDIENCE_KEY = "rtr:audience:v2";
+
+const roleForGroup: Record<Group, AppRole> = { supporter: "fan", business: "business", athlete: "athlete", team: "staff" };
 
 type Ctx = {
   audience: Audience | null;
-  /** The signed-in Supabase account, when there is one. */
+  /** The signed-in person in account form (id, name, role) for pages that need it. */
   profile: AuthProfile | null;
-  ready: boolean; // false until the session has been checked, so gates don't flash
+  ready: boolean; // false until this device's sign-in has been read, so gates don't flash
+  signIn: (a: Omit<Audience, "id"> & { id?: string }) => Audience;
   signOut: () => Promise<void>;
-  refresh: () => Promise<void>;
 };
 
-const AudienceContext = createContext<Ctx>({ audience: null, profile: null, ready: false, signOut: async () => {}, refresh: async () => {} });
+const AudienceContext = createContext<Ctx>({
+  audience: null, profile: null, ready: false,
+  signIn: (a) => ({ ...a, id: "x" }) as Audience, signOut: async () => {},
+});
 
-function toAudience(p: AuthProfile, athleteSlug?: string): Audience {
-  const group = groupForRole[p.role];
-  return {
-    group,
-    name: p.firstName || undefined,
-    supporterType: group === "supporter" ? "fan" : undefined,
-    athleteSlug: group === "athlete" ? athleteSlug ?? "avery" : undefined,
-  };
+function read(): Audience | null {
+  try {
+    const raw = localStorage.getItem(AUDIENCE_KEY);
+    return raw ? (JSON.parse(raw) as Audience) : null;
+  } catch {
+    return null;
+  }
 }
 
-export function AudienceProvider({ children }: { children: React.ReactNode }) {
-  const [profile, setProfile] = useState<AuthProfile | null>(null);
-  const [audience, setAudience] = useState<Audience | null>(null);
-  const [ready, setReady] = useState(!authConfigured);
+const toProfile = (a: Audience): AuthProfile => ({ id: a.id, email: a.email ?? "", firstName: a.name ?? "", role: roleForGroup[a.group] });
 
-  const refresh = useCallback(async () => {
-    if (!authConfigured) { setReady(true); return; }
-    try {
-      const { data } = await authClient().auth.getUser();
-      const p = data.user ? await loadAuthProfile(data.user) : null;
-      setProfile(p);
-      setAudience(p ? toAudience(p, data.user?.user_metadata?.athlete_slug as string | undefined) : null);
-    } catch {
-      // No session or Supabase unreachable: the public site keeps working signed out.
-      setProfile(null);
-      setAudience(null);
-    } finally {
-      setReady(true);
-    }
-  }, []);
+export function AudienceProvider({ children }: { children: React.ReactNode }) {
+  const [audience, setAudience] = useState<Audience | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    void refresh();
-    if (!authConfigured) return;
-    const { data } = authClient().auth.onAuthStateChange(() => { void refresh(); });
-    return () => data.subscription.unsubscribe();
-  }, [refresh]);
+    setAudience(read());
+    setReady(true);
+    // Keep every open tab on the same person.
+    const onStorage = (e: StorageEvent) => e.key === AUDIENCE_KEY && setAudience(read());
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  const signIn = useCallback((a: Omit<Audience, "id"> & { id?: string }) => {
+    const next: Audience = { ...a, id: a.id ?? `fan-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}` };
+    try { localStorage.setItem(AUDIENCE_KEY, JSON.stringify(next)); } catch {}
+    setAudience(next);
+    return next;
+  }, []);
 
   const signOut = useCallback(async () => {
-    try { if (authConfigured) await authClient().auth.signOut(); } catch {}
-    setProfile(null);
+    try { localStorage.removeItem(AUDIENCE_KEY); } catch {}
     setAudience(null);
   }, []);
 
-  return <AudienceContext.Provider value={{ audience, profile, ready, signOut, refresh }}>{children}</AudienceContext.Provider>;
+  return (
+    <AudienceContext.Provider value={{ audience, profile: audience ? toProfile(audience) : null, ready, signIn, signOut }}>
+      {children}
+    </AudienceContext.Provider>
+  );
 }
 
 export const useAudience = () => useContext(AudienceContext);

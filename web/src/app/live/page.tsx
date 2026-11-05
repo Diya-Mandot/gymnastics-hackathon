@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { athletes, seedCampaign } from "@/lib/seed";
 import { useArena } from "@/lib/arena";
-import { authClient, authConfigured } from "@/lib/auth";
+import { useAudience } from "@/components/AudienceProvider";
 import { SocialShare } from "@/components/live/SocialShare";
 import { ApparatusIcon, CardFan, Confetti, NoiseMeter, PrizeLadder, ROTATIONS, RotationTracker } from "@/components/live/PlayVisuals";
 import { demoBaseline, type ArenaEventType, type SpotlightType } from "@/lib/arena-model";
@@ -19,7 +19,7 @@ export default function Live() {
   const { state } = arena;
   const [guessStarted, setGuessStarted] = useState(false);
   const [guessFeedback, setGuessFeedback] = useState<string | null>(null);
-  const [signedIn, setSignedIn] = useState(false);
+  const signedIn = Boolean(useAudience().profile);
   const [rewardPrompt, setRewardPrompt] = useState<string | null>(null);
   const [burst, setBurst] = useState<{ where: "quiz" | "crowd"; n: number } | null>(null);
   const celebrate = (where: "quiz" | "crowd") => setBurst((b) => ({ where, n: (b?.n ?? 0) + 1 }));
@@ -40,10 +40,6 @@ export default function Live() {
     if (arena.isReady && question.sponsored) arena.track("sponsor_challenge_impression", question.id, { once: true });
   }, [arena.isReady, question.id, question.sponsored]);
 
-  useEffect(() => {
-    if (!authConfigured) return;
-    authClient().auth.getUser().then(({ data }) => setSignedIn(Boolean(data.user)));
-  }, []);
 
 
   function chooseAthlete(name: string) {

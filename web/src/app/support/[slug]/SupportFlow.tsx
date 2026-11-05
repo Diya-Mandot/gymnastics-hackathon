@@ -10,7 +10,6 @@ import { RockedCard } from "@/components/RockedCard";
 import { Wordmark } from "@/components/Wordmark";
 import { useLive } from "@/hooks/useLive";
 import { useArena } from "@/lib/arena";
-import { authClient, authConfigured } from "@/lib/auth";
 import { SocialShare } from "@/components/live/SocialShare";
 import { usd } from "@/lib/labels";
 import type { Athlete } from "@/lib/types";
@@ -46,12 +45,6 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
         supportType: finalAmount >= 100 ? "Impact Champion" : "One-time supporter",
       });
       arena.track("fan_contribution", `support-${athlete.slug}-${Date.now()}`, { amount: finalAmount });
-      if (authConfigured && finalAmount >= 10) {
-        const { data: authData } = await authClient().auth.getUser();
-        if (authData.user) await authClient().from("fan_referrals")
-          .update({ status: "contributed", points: 400, contributed_at: new Date().toISOString() })
-          .eq("referee_id", authData.user.id).eq("status", "signed_up");
-      }
       setSupporterNo(e.state.campaign.supporters);
       setPhase("done");
       window.scrollTo({ top: 0, behavior: "smooth" });

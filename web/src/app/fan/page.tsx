@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { RoleGate } from "@/components/live/RoleGate";
 import { useArena } from "@/lib/arena";
-import { authClient, authConfigured } from "@/lib/auth";
 import { claimPendingEntry, getEntry, RAFFLE, type RaffleEntry } from "@/lib/raffle";
 
 export default function Fan() {
@@ -78,17 +77,10 @@ function FanHome({ name, profileId }: { name: string; profileId: string }) {
 }
 
 function ReferralPanel({ profileId }: { profileId: string }) {
-  const [points, setPoints] = useState(0);
-  const [friends, setFriends] = useState(0);
+  // Demo: referral counts aren't tracked across devices without accounts, so these start at zero.
+  const points = 0;
+  const friends = 0;
   const [copied, setCopied] = useState(false);
-  useEffect(() => {
-    if (!authConfigured) return;
-    authClient().from("fan_referrals").select("status,points").eq("referrer_id", profileId).then(({ data }) => {
-      const referrals = (data ?? []) as unknown as Array<{ status: "signed_up" | "contributed"; points: number }>;
-      setFriends(referrals.length);
-      setPoints(referrals.reduce((total, referral) => total + referral.points, 0));
-    }, () => undefined);
-  }, [profileId]);
   const share = async () => {
     const url = `${window.location.origin}/join?ref=${profileId}`;
     const text = "Join me in Rock the Arena: play free meet-night games, collect Red Rocks cards, and unlock fan rewards.";

@@ -1,4 +1,4 @@
-// Who is using the site. The group comes from the signed-in Supabase account's role (see AudienceProvider).
+// Who is using the site: the quick sign-up at /join (no password, remembered on this device).
 // Shared pages (home, athletes, profiles, cards, the QR support flow) look the same for everyone;
 // each group gets its own navigation and its own areas.
 
@@ -7,7 +7,10 @@ export type Group = "supporter" | "business" | "athlete" | "team";
 export type SupporterType = "fan" | "alumni" | "parent" | "season-ticket" | "company";
 
 export type Audience = {
+  /** Stable id for this sign-in (rewards, raffle ticket, referrals). */
+  id: string;
   group: Group;
+  email?: string;
   name?: string;
   supporterType?: SupporterType; // supporters only
   athleteSlug?: string; // athletes only

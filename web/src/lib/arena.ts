@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { authClient, authConfigured } from "@/lib/auth";
 import {
   appendArenaEvent,
   completeRotationMission,
@@ -121,7 +120,6 @@ export function useArena(): {
   const channelRef = useRef<BroadcastChannel | null>(null);
 
   useEffect(() => {
-    let active = true;
     try {
       const loaded = readData();
       const anonymousId = getAnonymousFanId();
@@ -153,32 +151,22 @@ export function useArena(): {
         }
       };
       window.addEventListener("storage", onStorage);
-      if (authConfigured) {
-        authClient().auth.getUser().then(({ data: authData, error: authError }) => {
-          if (!active) return;
-          // No session just means an anonymous fan; only real auth failures are worth showing.
-          if (authError && authError.name !== "AuthSessionMissingError") {
-            setError(`Could not verify the signed-in profile; this session is using its anonymous demo identity. ${authError.message}`);
-            return;
+      // Signed in on this device? Keep this person's meet-night progress under their id.
+      try {
+        const signedInId = (JSON.parse(localStorage.getItem("rtr:audience:v2") ?? "null") as { id?: string } | null)?.id;
+        if (signedInId && signedInId !== fanIdRef.current) {
+          const migrated = transferArenaProgress(dataRef.current, fanIdRef.current, signedInId);
+          if (migrated !== dataRef.current) {
+            persist(migrated, channelRef.current);
+            dataRef.current = migrated;
+            setData(migrated);
           }
-          if (authData?.user) {
-            const previousFanId = fanIdRef.current;
-            const migrated = transferArenaProgress(dataRef.current, previousFanId, authData.user.id);
-            if (migrated !== dataRef.current) {
-              persist(migrated, channelRef.current);
-              dataRef.current = migrated;
-              setData(migrated);
-            }
-            setFanId(authData.user.id);
-            fanIdRef.current = authData.user.id;
-          }
-        }).catch((authError: unknown) => {
-          if (active) setError(`Could not verify the signed-in profile; this session is using its anonymous demo identity. ${authError instanceof Error ? authError.message : "Unknown authentication error."}`);
-        });
-      }
+          setFanId(signedInId);
+          fanIdRef.current = signedInId;
+        }
+      } catch {}
       setIsReady(true);
       return () => {
-        active = false;
         window.removeEventListener("storage", onStorage);
         channelRef.current?.close();
         channelRef.current = null;
@@ -187,7 +175,6 @@ export function useArena(): {
       setError(loadError instanceof Error ? loadError.message : "Could not load Arena demo data.");
       setIsReady(true);
       return () => {
-        active = false;
         channelRef.current?.close();
       };
     }

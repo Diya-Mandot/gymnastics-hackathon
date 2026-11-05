@@ -50,10 +50,10 @@ export const supporterTypes: Record<SupporterType, { label: string; pitch: strin
 export const sharedLinks: NavLink[] = [{ href: "/athletes", label: "Athletes" }];
 
 export function navFor(a: Audience | null): NavLink[] {
-  if (!a) return [...sharedLinks, { href: "/support", label: "Support & cards" }, { href: "/match", label: "For businesses" }];
+  if (!a) return [...sharedLinks, { href: "/live", label: "Play" }, { href: "/support", label: "Support & cards" }, { href: "/match", label: "For businesses" }];
   switch (a.group) {
     case "supporter":
-      return [...sharedLinks, { href: "/support", label: "Support" }, { href: "/support#cards", label: "Cards" }, { href: "/support#experiences", label: "Experiences" }, { href: "/support#activities", label: "Community fund" }];
+      return [...sharedLinks, { href: "/live", label: "Play" }, { href: "/live/rewards", label: "Rewards" }, { href: "/support", label: "Support" }, { href: "/support#cards", label: "Cards" }, { href: "/support#activities", label: "Community fund" }];
     case "business":
       return [{ href: "/athletes", label: "Athletes" }, { href: "/match", label: "Get Matched" }, { href: "/routines", label: "Impact Routines" }];
     case "athlete":
@@ -64,6 +64,7 @@ export function navFor(a: Audience | null): NavLink[] {
 }
 
 export const teamLinks: NavLink[] = [
+  { href: "/team/live", label: "Live Control" },
   { href: "/portal", label: "Athlete Portal" },
   { href: "/sponsors", label: "Sponsor Engine" },
   { href: "/admin", label: "Live campaign" },
@@ -73,7 +74,7 @@ export const teamLinks: NavLink[] = [
 // Footer directory: every area, labelled by who it's for.
 export const directory: { title: string; links: NavLink[] }[] = [
   { title: "Everyone", links: [{ href: "/athletes", label: "Athletes" }, { href: "/signin", label: "Sign in" }] },
-  { title: "Supporters", links: [{ href: "/support", label: "Support" }, { href: "/support#cards", label: "Trading cards" }, { href: "/support#experiences", label: "Fan experiences" }, { href: "/support#activities", label: "Community fund" }] },
+  { title: "Supporters", links: [{ href: "/live", label: "Play at the meet" }, { href: "/live/rewards", label: "Rewards" }, { href: "/support", label: "Support" }, { href: "/support#cards", label: "Trading cards" }, { href: "/support#experiences", label: "Fan experiences" }, { href: "/support#activities", label: "Community fund" }] },
   { title: "Businesses", links: [{ href: "/match", label: "Get Matched" }, { href: "/routines", label: "Impact Routines" }] },
   { title: "WRTH team", links: teamLinks },
 ];
@@ -93,6 +94,8 @@ const areas: { prefix: string; allow: Group[] }[] = [
   { prefix: "/match", allow: ["business", "team"] },
   { prefix: "/sponsors", allow: ["team"] },
   { prefix: "/admin", allow: ["team"] },
+  { prefix: "/team", allow: ["team"] },
+  { prefix: "/business", allow: ["business", "team"] },
   { prefix: "/portal", allow: ["team", "athlete"] },
 ];
 

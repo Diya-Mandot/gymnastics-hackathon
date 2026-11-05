@@ -196,6 +196,7 @@ export default function Home() {
   );
 }
 
+
 function Photo({ src, alt, caption, className = "" }: { src: string; alt: string; caption: string; className?: string }) {
   return (
     <figure className={`relative overflow-hidden rounded-[20px] ${className}`}>

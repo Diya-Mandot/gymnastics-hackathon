@@ -9,6 +9,9 @@ import { CampaignProgress, LiveDot } from "@/components/CampaignProgress";
 import { RockedCard } from "@/components/RockedCard";
 import { Wordmark } from "@/components/Wordmark";
 import { useLive } from "@/hooks/useLive";
+import { useArena } from "@/lib/arena";
+import { authClient, authConfigured } from "@/lib/auth";
+import { SocialShare } from "@/components/live/SocialShare";
 import { usd } from "@/lib/labels";
 import type { Athlete } from "@/lib/types";
 
@@ -18,11 +21,13 @@ type Phase = "choose" | "sending" | "done" | "error";
 
 export function SupportFlow({ athlete }: { athlete: Athlete }) {
   const { campaign, give } = useLive();
+  const arena = useArena();
   const [amount, setAmount] = useState(10);
   const [custom, setCustom] = useState("");
   const [name, setName] = useState("");
   const [phase, setPhase] = useState<Phase>("choose");
   const [supporterNo, setSupporterNo] = useState(0);
+  const [limitError, setLimitError] = useState(false);
 
   const isCustom = custom !== "";
   const finalAmount = isCustom ? Math.max(1, Math.round(Number(custom) || 0)) : amount;
@@ -30,6 +35,8 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
 
   async function onGive() {
     if (phase === "sending" || finalAmount < 1) return;
+    if (finalAmount > 600) { setLimitError(true); return; }
+    setLimitError(false);
     setPhase("sending");
     try {
       const e = await give({
@@ -38,6 +45,13 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
         supporterName: supporter,
         supportType: finalAmount >= 100 ? "Impact Champion" : "One-time supporter",
       });
+      arena.track("fan_contribution", `support-${athlete.slug}-${Date.now()}`, { amount: finalAmount });
+      if (authConfigured && finalAmount >= 10) {
+        const { data: authData } = await authClient().auth.getUser();
+        if (authData.user) await authClient().from("fan_referrals")
+          .update({ status: "contributed", points: 400, contributed_at: new Date().toISOString() })
+          .eq("referee_id", authData.user.id).eq("status", "signed_up");
+      }
       setSupporterNo(e.state.campaign.supporters);
       setPhase("done");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -105,11 +119,12 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
                     pattern="[0-9]*"
                     placeholder="Other"
                     value={custom}
-                    onChange={(e) => setCustom(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
+                    onChange={(e) => { setLimitError(false); setCustom(e.target.value.replace(/[^0-9]/g, "").slice(0, 5)); }}
                     className="w-full bg-transparent px-1 font-display text-xl outline-none placeholder:font-sans placeholder:text-base placeholder:text-faint"
                   />
                 </label>
               </div>
+              {limitError && <p role="alert" className="mt-3 text-sm text-red-lit">Online supporter transactions are limited to $600. <a className="underline" href="mailto:prachiaswani2005@gmail.com?subject=WRTH%20support%20conversation">Contact WRTH Admin</a> for larger support.</p>}
 
               <label className="mt-5 block">
                 <span className="text-sm text-muted">Your name on the supporter wall (optional)</span>
@@ -194,6 +209,7 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
             </section>
 
             <div className="mt-8 grid gap-2">
+              <SocialShare title="I'm backing the routine" detail={`I just backed ${athlete.firstName} at Rock the Arena.`} entityId={`support-${athlete.slug}`} />
               <ShareButton name={athlete.firstName} />
               <Link href={`/athletes/${athlete.slug}`} className="btn btn-line w-full">
                 Watch {athlete.firstName}’s story

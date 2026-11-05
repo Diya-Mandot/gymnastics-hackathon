@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useAudience } from "@/components/AudienceProvider";
@@ -97,7 +99,7 @@ export function SignIn() {
 
         <div className="mt-10 flex flex-wrap items-center gap-4">
           <button type="submit" disabled={!group} className="btn btn-red disabled:opacity-40">Continue</button>
-          <p className="text-xs text-faint">Demo sign-in: no password, remembered on this device only. Real accounts would come from WRTH’s login system.</p>
+          <p className="text-xs text-faint">Demo sign-in: no password, remembered on this device only. Want to keep your points and rewards? <Link href="/join" className="link">Create a fan account</Link>.</p>
         </div>
       </form>
     </section>

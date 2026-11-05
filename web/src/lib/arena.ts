@@ -8,6 +8,7 @@ import {
   createInitialArenaData,
   startChallenge as startChallengeModel,
   submitChallengeAnswer,
+  transferArenaProgress,
   toArenaView,
   type ArenaData,
   type ArenaEventType,
@@ -160,6 +161,13 @@ export function useArena(): {
             return;
           }
           if (authData.user) {
+            const previousFanId = fanIdRef.current;
+            const migrated = transferArenaProgress(dataRef.current, previousFanId, authData.user.id);
+            if (migrated !== dataRef.current) {
+              persist(migrated, channelRef.current);
+              dataRef.current = migrated;
+              setData(migrated);
+            }
             setFanId(authData.user.id);
             fanIdRef.current = authData.user.id;
           }

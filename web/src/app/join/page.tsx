@@ -27,7 +27,7 @@ export default function Join() {
     const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { first_name: name, role } } });
     if (error) return setMessage(error.message);
     if (!data.session) return setMessage("Check your inbox to confirm your account, then log in.");
-    localStorage.setItem("rtr:membership-offer", "1");
+    if (role === "fan") localStorage.setItem("rtr:new-fan-offer", "1");
     router.push(role === "business" ? "/business" : role === "athlete" ? "/portal/avery" : "/fan");
   }
   return <main className="mx-auto max-w-4xl px-5 py-14">

@@ -326,8 +326,8 @@ function RewardClaim({ name, close }: { name: string; close: () => void }) {
       <p className="label text-red-lit">Reward unlocked</p>
       <h2 className="mt-3 font-display text-5xl text-ink">Claim your <em>{name}.</em></h2>
       <p className="mt-4 text-muted">Create a free profile to save this meet-night reward, build your collection, and receive approved WRTH updates. Free gameplay stays open either way.</p>
-      <Link href="/join" className="btn btn-red mt-6 w-full">Sign up to claim</Link>
-      <Link href="/join" className="mt-4 block w-full text-center text-sm font-semibold text-red-lit">Log in instead</Link>
+      <Link href="/join" onClick={() => localStorage.setItem("rtr:pending-reward", name)} className="btn btn-red mt-6 w-full">Sign up to claim</Link>
+      <Link href="/join" onClick={() => localStorage.setItem("rtr:pending-reward", name)} className="mt-4 block w-full text-center text-sm font-semibold text-red-lit">Log in instead</Link>
       <button onClick={close} className="mt-4 w-full text-sm text-muted">Keep playing without saving</button>
     </section>
   </div>;

@@ -148,6 +148,23 @@ export function createInitialArenaData(): ArenaData {
   };
 }
 
+/** Move this browser's anonymous meet progress to its newly authenticated Fan. */
+export function transferArenaProgress(data: ArenaData, fromFanId: string, toFanId: string): ArenaData {
+  if (!fromFanId || fromFanId === toFanId) return data;
+  const copy = <T,>(record: Record<string, T>) => record[fromFanId] === undefined
+    ? record
+    : { ...record, [toFanId]: record[toFanId] ?? record[fromFanId] };
+  return {
+    ...data,
+    events: data.events.map((event) => event.fanId === fromFanId ? { ...event, fanId: toFanId } : event),
+    attempts: copy(data.attempts),
+    startedChallenges: copy(data.startedChallenges),
+    completedMissions: copy(data.completedMissions),
+    dismissedSpotlights: copy(data.dismissedSpotlights),
+    leaderboardOptIns: data.leaderboardOptIns.map((id) => id === fromFanId ? toFanId : id),
+  };
+}
+
 export function appendArenaEvent(
   data: ArenaData,
   event: Omit<ArenaEvent, "simulated">,

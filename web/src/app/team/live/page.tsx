@@ -93,7 +93,7 @@ function Controller() {
       </section>
       <div className="mt-7 flex flex-wrap gap-3">
         <Link className="btn btn-red" href="/team/live/analytics">Open live analytics</Link>
-        <Link className="btn btn-line" href="/live">Preview the fan experience</Link>
+        <Link className="btn btn-line" href="/live">Preview the fan experience</Link><Link className="btn btn-red" href="/live/qr">Show the arena QR code</Link>
         <Link className="btn btn-line" href="/sponsors">Open Sponsor Engine</Link>
       </div>
     </main>

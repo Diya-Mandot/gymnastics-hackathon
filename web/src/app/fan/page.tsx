@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { RoleGate } from "@/components/live/RoleGate";
 import { useArena } from "@/lib/arena";
 import { authClient, authConfigured } from "@/lib/auth";
+import { claimPendingEntry, getEntry, RAFFLE, type RaffleEntry } from "@/lib/raffle";
 
 export default function Fan() {
   return <RoleGate roles={["fan"]}>{(profile) => <FanHome name={profile.firstName} profileId={profile.id} />}</RoleGate>;
@@ -13,9 +14,12 @@ export default function Fan() {
 function FanHome({ name, profileId }: { name: string; profileId: string }) {
   const [offer, setOffer] = useState(false);
   const [claimedReward, setClaimedReward] = useState("");
+  const [raffle, setRaffle] = useState<RaffleEntry | null>(null);
   const { state } = useArena();
 
   useEffect(() => {
+    // Fans who played the arena QR game get their raffle ticket the moment they have an account.
+    setRaffle(claimPendingEntry(profileId) ?? getEntry(profileId));
     const reward = localStorage.getItem("rtr:pending-reward");
     if (reward) {
       setClaimedReward(reward);
@@ -27,12 +31,14 @@ function FanHome({ name, profileId }: { name: string; profileId: string }) {
       localStorage.removeItem("rtr:new-fan-offer");
     }, 15_000);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [profileId]);
 
   return <main className="mx-auto max-w-7xl px-4 py-9 sm:px-8">
     {offer && <Membership close={() => setOffer(false)} />}
     <p className="label text-red-lit">Fan HQ - Rock the Arena</p>
     <h1 className="mt-2 font-display text-7xl text-ink">Hey {name}, <em>you&apos;re on the board.</em></h1>
+
+    <RaffleCard entry={raffle} />
 
     {claimedReward && <section className="mt-6 rounded-2xl border border-green bg-green/10 p-5" aria-live="polite">
       <p className="label text-green">Reward claimed</p>
@@ -112,14 +118,33 @@ function SupporterRewards({ total }: { total: number }) {
   </section>;
 }
 
+/** Slides in 15 seconds after a new fan lands here: a nudge to give $10 (once or monthly). */
 function Membership({ close }: { close: () => void }) {
-  return <div className="fixed inset-0 z-[100] grid place-items-end bg-black/60 p-4 sm:place-items-center" role="dialog" aria-modal="true" aria-label="WRTH supporter membership">
-    <section className="card max-w-md p-7">
-      <p className="label text-red-lit">New Fan reward</p>
-      <h2 className="mt-3 font-display text-5xl text-ink">Make every meet <em>count.</em></h2>
-      <p className="mt-4 text-muted">Join WRTH for $10/month to unlock early card drops, athlete/community updates, streak rewards, and priority access to approved experiences.</p>
-      <Link href="/support/avery" className="btn btn-red mt-6 w-full">Start $10/month demo</Link>
-      <button onClick={close} className="mt-4 w-full text-sm text-muted">Not now</button>
+  return <div role="dialog" aria-modal="false" aria-label="Give $10 to back the team" className="fixed inset-x-3 bottom-20 z-[100] animate-rise sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-[380px]">
+    <section className="card relative overflow-hidden border-l-4 !border-l-red p-5 shadow-2xl">
+      <button onClick={close} className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full text-muted hover:bg-sand hover:text-ink" aria-label="Close">✕</button>
+      <p className="label text-red-lit">🎉 Welcome to the team</p>
+      <h2 className="mt-2 pr-8 font-display text-3xl text-ink">Give $10 to back the Red Rocks tonight.</h2>
+      <p className="mt-2 text-sm text-muted">It goes to athletes’ community work through Who Rocks the House. Make it monthly to unlock fan experiences over time.</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Link href="/support/avery?amount=10" className="btn btn-red !py-2.5 text-sm">Give $10</Link>
+        <Link href="/support#experiences" className="btn btn-line !py-2.5 text-sm">$10/month</Link>
+      </div>
+      <button onClick={close} className="mt-3 text-xs text-muted hover:text-ink">Not now</button>
     </section>
   </div>;
+}
+
+function RaffleCard({ entry }: { entry: RaffleEntry | null }) {
+  return <section className={`mt-6 flex flex-wrap items-center gap-5 rounded-[20px] border p-5 ${entry ? "border-gold bg-gold-soft" : "border-line bg-surface"}`}>
+    <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gold text-3xl" aria-hidden="true">🎟️</span>
+    <div className="min-w-0 flex-1">
+      <p className="label !text-gold">Tonight’s raffle · sample prize</p>
+      {entry
+        ? <h2 className="mt-1 font-display text-3xl text-ink">You’re in! Ticket <span className="text-gold">{entry.ticket}</span></h2>
+        : <h2 className="mt-1 font-display text-3xl text-ink">Scan the arena QR code and play to enter.</h2>}
+      <p className="mt-1 text-sm text-muted">{RAFFLE.prize} · drawn {RAFFLE.drawAt.toLowerCase()}.</p>
+    </div>
+    {!entry && <Link href="/live/iq" className="btn btn-red">Play Routine IQ</Link>}
+  </section>;
 }

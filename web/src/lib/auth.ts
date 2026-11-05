@@ -16,3 +16,7 @@ export async function loadAuthProfile(user: User): Promise<AuthProfile | null> {
   if (!profile) return null;
   return { id: profile.id, email: profile.email, firstName: profile.first_name, role: profile.role };
 }
+
+/** Where each kind of account lands after signing in. */
+export const homeForRole = (role: AppRole) =>
+  role === "staff" ? "/team/live" : role === "business" ? "/business" : role === "athlete" ? "/portal/avery" : "/fan";

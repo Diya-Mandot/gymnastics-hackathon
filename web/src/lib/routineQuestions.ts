@@ -1,0 +1,45 @@
+// Routine IQ questions, one per rotation. Shared by the Play hub and the QR game page.
+
+export const routineQuestions = [
+  {
+    id: "routine-vault",
+    rotation: 1,
+    apparatus: "Vault",
+    question: "In a vault, when does the gymnast leave the springboard?",
+    options: ["Before the run begins", "After the approach and hurdle", "After landing"],
+    correct: "After the approach and hurdle",
+    explanation: "The gymnast runs, hurdles onto the springboard, and then pushes off the vault table.",
+    card: "ella",
+  },
+  {
+    id: "routine-beam",
+    rotation: 2,
+    apparatus: "Balance Beam",
+    question: "Which apparatus is approximately 10 centimeters wide?",
+    options: ["Vault", "Balance Beam", "Floor Exercise"],
+    correct: "Balance Beam",
+    explanation: "The balance beam is approximately 10 centimeters wide.",
+    card: "avery",
+    sponsored: true,
+  },
+  {
+    id: "routine-bars",
+    rotation: 3,
+    apparatus: "Uneven Bars",
+    question: "Which event uses two horizontal bars at different heights?",
+    options: ["Uneven Bars", "Vault", "Balance Beam"],
+    correct: "Uneven Bars",
+    explanation: "Uneven bars routines move between a high bar and a low bar.",
+    card: "camie",
+  },
+  {
+    id: "routine-floor",
+    rotation: 4,
+    apparatus: "Floor Exercise",
+    question: "Which routine combines music, dance, and tumbling?",
+    options: ["Floor Exercise", "Balance Beam", "Vault"],
+    correct: "Floor Exercise",
+    explanation: "Floor exercise combines tumbling passes with choreography and performance.",
+    card: "clara",
+  },
+];

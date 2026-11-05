@@ -154,13 +154,20 @@ export async function audiences(browser) {
   page = await visit(null, "/support/avery");
   check(!(await gated(page)) && (await page.getByRole("button", { name: /Give \$10 demo/i }).count()) === 1, "signed out: the phone QR flow stays open");
 
-  page = await visit({ group: "supporter", supporterType: "alumni", name: "Jamie" }, "/support");
-  check((await page.getByTestId("supporter-welcome").textContent()).includes("Alumni"), "alumni supporter gets a tailored welcome");
+  // In-arena QR game: play signed out, then get sent to sign up with the reward and raffle waiting.
+  page = await visit(null, "/live/iq");
+  await page.getByRole("button", { name: /Balance Beam/i }).first().click();
+  await page.getByRole("link", { name: /Sign up & collect/ }).waitFor();
+  const raffle = await page.evaluate(() => localStorage.getItem("rtr:raffle-pending"));
+  check(raffle === "1" && (await page.getByRole("link", { name: /Sign up & collect/ }).getAttribute("href")).startsWith("/join?from=qr"), "QR game: answer, then sign up to collect the card and raffle ticket");
+
+  page = await visit({ group: "supporter" }, "/support");
+  check((await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Fan HQ" }).count()) === 1, "fans get the fan menu (Fan HQ)");
   check((await page.locator("#activities article").count()) === 4, "supporters see four community activities");
-  page = await visit({ group: "supporter", supporterType: "fan" }, "/routines");
+  page = await visit({ group: "supporter" }, "/routines");
   check(await gated(page), "supporters don't see business Impact Routines");
 
-  page = await visit({ group: "business", name: "BrightPath" }, "/routines");
+  page = await visit({ group: "business" }, "/routines");
   check(!(await gated(page)) && (await page.getByRole("link", { name: "Impact Routines" }).count()) > 0, "businesses see Impact Routines in their nav");
   page = await visit({ group: "business" }, "/admin/revenue");
   check(await gated(page), "businesses can't open team revenue");
@@ -171,9 +178,8 @@ export async function audiences(browser) {
   check(await gated(page), "Camie can't open Avery's portal");
 
   page = await visit(null, "/sponsors");
-  await page.getByRole("button", { name: /Continue as wrth team/i }).click();
-  await page.getByRole("tab", { name: "CRM" }).waitFor();
-  check(true, "one click from the gate opens the area as that group");
+  const login = await page.getByRole("link", { name: /WRTH staff log in/i }).getAttribute("href");
+  check(login.startsWith("/join?next=%2Fsponsors"), "the gate sends staff to log in and brings them back");
   check(errors.length === 0, `no page errors (${errors.join("; ")})`);
 }
 

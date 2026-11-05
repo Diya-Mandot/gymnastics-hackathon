@@ -3,14 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { allowedGroups, canView, describe, groups, type Audience } from "@/lib/audience";
+import { allowedGroups, canView, describe, groups, type Group } from "@/lib/audience";
 import { athleteBySlug, athletes } from "@/lib/seed";
 import { useAudience } from "./AudienceProvider";
 
 /** Wraps an area meant for particular groups. Others see who it's for and a one-click way in. */
 export function AudienceGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { audience, ready, signIn } = useAudience();
+  const { audience, ready } = useAudience();
 
   if (!allowedGroups(pathname)) return <>{children}</>; // open to everyone, render straight away
   if (!ready) return <div className="min-h-[60svh]" aria-busy="true" />;
@@ -20,18 +20,21 @@ export function AudienceGate({ children }: { children: React.ReactNode }) {
   const slug = pathname.startsWith("/portal/") ? pathname.split("/")[2] : undefined;
   const portalAthlete = slug ? athleteBySlug(slug) : undefined;
 
-  // One-click demo identities for this area.
-  const options: { label: string; as: Audience }[] = allow.map((g) =>
-    g === "athlete"
-      ? { label: `Continue as ${portalAthlete?.name ?? "an athlete"}`, as: { group: "athlete", athleteSlug: portalAthlete?.slug ?? "avery" } }
-      : { label: g === "team" ? "Continue as WRTH team" : `Continue as a ${groups[g].label.toLowerCase()}`, as: { group: g } },
-  );
+  // Sign in (or sign up) with an account of the right kind, then come straight back here.
+  const roleFor: Record<Group, string> = { supporter: "fan", business: "business", athlete: "athlete", team: "staff" };
+  const options: { label: string; href: string }[] = allow.map((g) => ({
+    label:
+      g === "team" ? "WRTH staff log in"
+      : g === "athlete" ? `Log in as ${portalAthlete?.name ?? "an athlete"}`
+      : `Sign in as a ${groups[g].label.toLowerCase()}`,
+    href: `/join?next=${encodeURIComponent(pathname)}&role=${roleFor[g]}${g === "team" || g === "athlete" ? "&mode=login" : ""}`,
+  }));
 
   const ownPortal = audience?.group === "athlete" && audience.athleteSlug && audience.athleteSlug !== slug;
 
   // Business areas get a proper welcome instead of a bare "not your view" message.
   if (allow.includes("business") && !ownPortal) {
-    return <BusinessWelcome options={options} signedInAs={audience ? describe(audience) : null} onPick={(as) => signIn({ ...as, name: audience?.name })} pathname={pathname} />;
+    return <BusinessWelcome options={options} signedInAs={audience ? describe(audience) : null} />;
   }
 
   return (
@@ -49,14 +52,10 @@ export function AudienceGate({ children }: { children: React.ReactNode }) {
           <Link href={`/portal/${audience!.athleteSlug}`} className="btn btn-red">Go to my portal</Link>
         ) : (
           options.map((o, i) => (
-            <button key={o.label} className={i === 0 ? "btn btn-red" : "btn btn-line"} onClick={() => signIn({ ...o.as, name: audience?.name })}>
-              {o.label}
-            </button>
+            <Link key={o.label} href={o.href} className={i === 0 ? "btn btn-red" : "btn btn-line"}>{o.label}</Link>
           ))
         )}
-        <Link href={`/signin?next=${encodeURIComponent(pathname)}`} className="btn btn-line">Choose a different view</Link>
       </div>
-      <p className="mt-6 text-xs text-faint">Demo sign-in: no password, remembered on this device only.</p>
     </section>
   );
 }
@@ -67,11 +66,9 @@ const perks = [
   { tone: "text-green bg-[color-mix(in_srgb,var(--color-green)_15%,transparent)]", title: "Results you can measure", body: "QR scans, offer claims and new customers, reported back to you.", icon: "M4 20V10m6 10V4m6 16v-7m4 7H2" },
 ];
 
-function BusinessWelcome({ options, signedInAs, onPick, pathname }: {
-  options: { label: string; as: Audience }[];
+function BusinessWelcome({ options, signedInAs }: {
+  options: { label: string; href: string }[];
   signedInAs: string | null;
-  onPick: (as: Audience) => void;
-  pathname: string;
 }) {
   return (
     <section data-testid="audience-gate">
@@ -86,14 +83,13 @@ function BusinessWelcome({ options, signedInAs, onPick, pathname }: {
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/80">
             Answer six quick questions and we’ll match you with athletes whose causes and audience fit your business.
           </p>
-          {signedInAs && <p className="mt-3 text-sm text-white/65">You’re signed in as {signedInAs}. Switch to a business view to continue.</p>}
+          {signedInAs && <p className="mt-3 text-sm text-white/65">You’re signed in as {signedInAs}. Sign in with a business account to continue.</p>}
           <div className="mt-8 flex flex-wrap gap-3">
             {options.map((o, i) => (
-              <button key={o.label} className={i === 0 ? "btn btn-red" : "btn btn-line"} onClick={() => onPick(o.as)}>
+              <Link key={o.label} href={o.href} className={i === 0 ? "btn btn-red" : "btn btn-line"}>
                 {i === 0 ? "Get matched as a business" : o.label}
-              </button>
+              </Link>
             ))}
-            <Link href={`/signin?next=${encodeURIComponent(pathname)}`} className="btn btn-line">Choose a different view</Link>
           </div>
           <div className="mt-10 flex items-center gap-4">
             <div className="flex -space-x-3" aria-hidden="true">
@@ -117,7 +113,6 @@ function BusinessWelcome({ options, signedInAs, onPick, pathname }: {
             <p className="mt-2 text-muted">{p.body}</p>
           </article>
         ))}
-        <p className="text-xs text-faint md:col-span-3">Demo sign-in: no password, remembered on this device only.</p>
       </div>
     </section>
   );

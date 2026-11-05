@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { describe, groups, navFor, type NavLink } from "@/lib/audience";
+import { describe, groups, homeFor, navFor, type NavLink } from "@/lib/audience";
 import { athleteBySlug } from "@/lib/seed";
 import { useAudience } from "./AudienceProvider";
 import { ThemeSwitch } from "./ThemeSwitch";
@@ -43,8 +43,8 @@ export function NavBar() {
     </Link>
   );
 
-  const out = () => {
-    signOut();
+  const out = async () => {
+    await signOut();
     router.push("/");
   };
 
@@ -74,21 +74,21 @@ export function NavBar() {
           {audience ? (
             <>
               <Link
-                href="/signin"
+                href={homeFor(audience)}
                 className="flex items-center gap-2 rounded-full border border-line py-1 pl-1 pr-3 text-sm text-ink transition-colors hover:border-ink/40"
-                title="Switch view"
+                title="My home"
               >
                 <span className="grid h-7 w-7 place-items-center rounded-full bg-red text-xs font-semibold text-white" aria-hidden="true">
                   {(who ?? "?").trim().charAt(0).toUpperCase()}
                 </span>
                 <span className="max-w-[14ch] truncate">{who}</span>
-                <span className="sr-only">, switch view</span>
+                <span className="sr-only">, my home</span>
               </Link>
               <button onClick={out} className="text-sm text-muted hover:text-ink">Sign out</button>
             </>
           ) : (
             <>
-              <Link href="/signin" className="btn btn-line !px-4 !py-2 text-sm">Sign in</Link>
+              <Link href="/join?mode=login" className="btn btn-line !px-4 !py-2 text-sm">Sign in</Link>
               <Link href="/support/avery" className="btn btn-red !px-4 !py-2 text-sm">Back a gymnast</Link>
             </>
           )}
@@ -96,7 +96,7 @@ export function NavBar() {
 
         <div className="flex items-center gap-2 lg:hidden">
           {ready && !audience && (
-            <Link href="/signin" className="btn btn-line !px-4 !py-2 text-sm">Sign in</Link>
+            <Link href="/join?mode=login" className="btn btn-line !px-4 !py-2 text-sm">Sign in</Link>
           )}
         <button
           className="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface lg:hidden"
@@ -133,12 +133,12 @@ export function NavBar() {
           <div className="flex gap-3 pt-5">
             {audience ? (
               <>
-                <Link href="/signin" className="btn btn-line flex-1">Switch view</Link>
+                <Link href={homeFor(audience)} className="btn btn-line flex-1">My home</Link>
                 <button onClick={out} className="btn btn-line flex-1">Sign out</button>
               </>
             ) : (
               <>
-                <Link href="/signin" className="btn btn-line flex-1">Sign in</Link>
+                <Link href="/join?mode=login" className="btn btn-line flex-1">Sign in</Link>
                 <Link href="/support/avery" className="btn btn-red flex-1">Back a gymnast</Link>
               </>
             )}

@@ -10,50 +10,8 @@ import { authClient, authConfigured } from "@/lib/auth";
 import { SocialShare } from "@/components/live/SocialShare";
 import { ApparatusIcon, CardFan, Confetti, NoiseMeter, PrizeLadder, ROTATIONS, RotationTracker } from "@/components/live/PlayVisuals";
 import { demoBaseline, type ArenaEventType, type SpotlightType } from "@/lib/arena-model";
+import { routineQuestions } from "@/lib/routineQuestions";
 
-const routineQuestions = [
-  {
-    id: "routine-vault",
-    rotation: 1,
-    apparatus: "Vault",
-    question: "In a vault, when does the gymnast leave the springboard?",
-    options: ["Before the run begins", "After the approach and hurdle", "After landing"],
-    correct: "After the approach and hurdle",
-    explanation: "The gymnast runs, hurdles onto the springboard, and then pushes off the vault table.",
-    card: "ella",
-  },
-  {
-    id: "routine-beam",
-    rotation: 2,
-    apparatus: "Balance Beam",
-    question: "Which apparatus is approximately 10 centimeters wide?",
-    options: ["Vault", "Balance Beam", "Floor Exercise"],
-    correct: "Balance Beam",
-    explanation: "The balance beam is approximately 10 centimeters wide.",
-    card: "avery",
-    sponsored: true,
-  },
-  {
-    id: "routine-bars",
-    rotation: 3,
-    apparatus: "Uneven Bars",
-    question: "Which event uses two horizontal bars at different heights?",
-    options: ["Uneven Bars", "Vault", "Balance Beam"],
-    correct: "Uneven Bars",
-    explanation: "Uneven bars routines move between a high bar and a low bar.",
-    card: "camie",
-  },
-  {
-    id: "routine-floor",
-    rotation: 4,
-    apparatus: "Floor Exercise",
-    question: "Which routine combines music, dance, and tumbling?",
-    options: ["Floor Exercise", "Balance Beam", "Vault"],
-    correct: "Floor Exercise",
-    explanation: "Floor exercise combines tumbling passes with choreography and performance.",
-    card: "clara",
-  },
-];
 
 const athleteChoices = ["Avery Neff", "Camie Winger", "Clara Raposo"];
 export default function Live() {
@@ -67,7 +25,6 @@ export default function Live() {
   const celebrate = (where: "quiz" | "crowd") => setBurst((b) => ({ where, n: (b?.n ?? 0) + 1 }));
   const question = routineQuestions.find((item) => item.rotation === state.rotation) ?? routineQuestions[0];
   const attempt = state.personalAttempts[question.id];
-  const started = (state.startedChallenges[state.fanId] ?? []).includes(question.id);
   const athleteGuess = state.rotation === 3;
   const mission = [
     { id: "vault", title: "Vault: try a quick Routine IQ question.", source: "Complete the vault question." },
@@ -88,12 +45,6 @@ export default function Live() {
     authClient().auth.getUser().then(({ data }) => setSignedIn(Boolean(data.user)));
   }, []);
 
-  const submitRoutineAnswer = (answer: string) => {
-    arena.startChallenge(question.id, question.sponsored);
-    const result = arena.answer(question.id, answer, question.correct, question.card, question.sponsored);
-    if (result?.correct) celebrate("quiz");
-    if (result?.correct && !signedIn) setRewardPrompt(`${athletes.find((a) => a.slug === question.card)?.name ?? question.card} card`);
-  };
 
   function chooseAthlete(name: string) {
     arena.startChallenge("guess-athlete");
@@ -155,40 +106,14 @@ export default function Live() {
             </div>
             <h2 id="routine-title" className="mt-3 font-display text-4xl text-ink">{question.question}</h2>
             <p className="mt-2 text-sm text-muted">One answer per challenge. No purchase or donation is needed; incorrect answers earn zero points.</p>
-            {state.status !== "live" || !state.active ? (
-              <p className="mt-5 rounded-xl bg-sand p-4 text-sm text-muted">The meet or challenge is not currently active. Staff controls the approved rotation schedule.</p>
-            ) : !started && !attempt ? (
-              <button onClick={() => arena.startChallenge(question.id, question.sponsored)} className="btn btn-red mt-5 w-full sm:w-auto">Start Routine IQ</button>
+            {attempt ? (
+              <div className="mt-5 rounded-xl bg-sand p-4 text-sm text-ink" role="status">
+                <p className="font-semibold">{attempt.correct ? `Correct · ${attempt.pointsAwarded} points 🎉` : "You played this one · 0 points"}</p>
+                <p className="mt-1">{question.explanation}</p>
+                <Link href="/live/iq" className="mt-2 inline-block font-semibold text-red-lit">See your reward →</Link>
+              </div>
             ) : (
-              <>
-                <div className="mt-5 grid gap-3">
-                  {question.options.map((option, oi) => (
-                    <button
-                      disabled={Boolean(attempt)}
-                      key={option}
-                      onClick={() => submitRoutineAnswer(option)}
-                      className={`group flex items-center gap-4 rounded-xl border px-4 py-3.5 text-left transition-all ${
-                        attempt?.submittedAnswer === option
-                          ? attempt.correct ? "border-green bg-green/10" : "border-red bg-red-soft"
-                          : "border-line bg-surface hover:-translate-y-0.5 hover:border-red"
-                      }`}
-                    >
-                      <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full font-display text-lg ${["bg-red text-white", "bg-sky text-white", "bg-gold text-black", "bg-green text-black"][oi % 4]}`} aria-hidden="true">
-                        {"ABCD"[oi]}
-                      </span>
-                      <span className="text-[15px] text-ink">{option}</span>
-                      {attempt?.submittedAnswer === option && <span className="ml-auto text-lg" aria-hidden="true">{attempt.correct ? "🎉" : "✕"}</span>}
-                    </button>
-                  ))}
-                </div>
-                {attempt && (
-                  <div className="mt-5 rounded-xl bg-sand p-4 text-sm text-ink" role="status">
-                    <p className="font-semibold">{attempt.correct ? `Correct · ${attempt.pointsAwarded} points` : "Challenge complete · 0 points"}</p>
-                    <p className="mt-1">{question.explanation}</p>
-                    {attempt.correct && <Link href="/live/cards" className="mt-2 inline-block font-semibold text-red-lit">View unlocked card →</Link>}
-                  </div>
-                )}
-              </>
+              <Link href="/live/iq" className="btn btn-red mt-5 w-full sm:w-auto">Play Routine IQ →</Link>
             )}
             </div>
           </section>

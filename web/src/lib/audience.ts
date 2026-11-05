@@ -1,4 +1,4 @@
-// Who is using the site. Demo sign-in only: no passwords, stored on this device.
+// Who is using the site. The group comes from the signed-in Supabase account's role (see AudienceProvider).
 // Shared pages (home, athletes, profiles, cards, the QR support flow) look the same for everyone;
 // each group gets its own navigation and its own areas.
 
@@ -53,7 +53,8 @@ export function navFor(a: Audience | null): NavLink[] {
   if (!a) return [...sharedLinks, { href: "/live", label: "Play" }, { href: "/support", label: "Support & cards" }, { href: "/match", label: "For businesses" }];
   switch (a.group) {
     case "supporter":
-      return [...sharedLinks, { href: "/live", label: "Play" }, { href: "/live/rewards", label: "Rewards" }, { href: "/support", label: "Support" }, { href: "/support#cards", label: "Cards" }, { href: "/support#activities", label: "Community fund" }];
+      // Fans see fan things only: their hub, the games, rewards, cards and ways to give.
+      return [{ href: "/fan", label: "Fan HQ" }, { href: "/live", label: "Play" }, { href: "/live/rewards", label: "Rewards" }, { href: "/live/cards", label: "My cards" }, ...sharedLinks, { href: "/support", label: "Give" }];
     case "business":
       return [{ href: "/athletes", label: "Athletes" }, { href: "/match", label: "Get Matched" }, { href: "/routines", label: "Impact Routines" }];
     case "athlete":
@@ -73,7 +74,7 @@ export const teamLinks: NavLink[] = [
 
 // Footer directory: every area, labelled by who it's for.
 export const directory: { title: string; links: NavLink[] }[] = [
-  { title: "Everyone", links: [{ href: "/athletes", label: "Athletes" }, { href: "/signin", label: "Sign in" }] },
+  { title: "Everyone", links: [{ href: "/athletes", label: "Athletes" }, { href: "/join", label: "Sign in or join" }] },
   { title: "Supporters", links: [{ href: "/live", label: "Play at the meet" }, { href: "/live/rewards", label: "Rewards" }, { href: "/support", label: "Support" }, { href: "/support#cards", label: "Trading cards" }, { href: "/support#experiences", label: "Fan experiences" }, { href: "/support#activities", label: "Community fund" }] },
   { title: "Businesses", links: [{ href: "/match", label: "Get Matched" }, { href: "/routines", label: "Impact Routines" }] },
   { title: "WRTH team", links: teamLinks },
@@ -81,10 +82,10 @@ export const directory: { title: string; links: NavLink[] }[] = [
 
 export function homeFor(a: Audience): string {
   switch (a.group) {
-    case "supporter": return "/support";
+    case "supporter": return "/fan";
     case "business": return "/match";
     case "athlete": return `/portal/${a.athleteSlug ?? "avery"}`;
-    case "team": return "/sponsors";
+    case "team": return "/team/live";
   }
 }
 

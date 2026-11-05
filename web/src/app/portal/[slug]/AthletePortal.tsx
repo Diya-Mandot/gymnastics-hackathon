@@ -48,7 +48,7 @@ export function AthletePortal({ athlete, tab }: { athlete: Athlete; tab: PortalT
             <h1 className="mt-3 animate-rise font-display text-[clamp(52px,7vw,104px)] text-ink [animation-delay:60ms]">
               {athlete.firstName}’s <em>portal.</em>
             </h1>
-            <p className="mt-3 text-sm text-ink/60">Demo sign-in · real Red Rocks photo; name, story &amp; stats are demo content</p>
+            <p className="mt-3 text-sm text-ink/60">Real Red Rocks photo; story &amp; stats are demo content</p>
           </div>
           {!isAthlete && (
           <div className="flex flex-wrap items-center gap-3">

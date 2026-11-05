@@ -14,10 +14,24 @@ export function check(condition, message) {
   console.log(`    ✓ ${message}`);
 }
 
-/** A browser context already signed in through the demo sign-in (same key the app uses). */
+/**
+ * A browser context signed in with a real Supabase account of the audience's role, through the /join page.
+ * Accounts come from env: E2E_FAN_EMAIL / E2E_FAN_PASSWORD, and the same for BUSINESS, ATHLETE and STAFF.
+ */
+const roleFor = { supporter: "FAN", business: "BUSINESS", athlete: "ATHLETE", team: "STAFF" };
 export async function signedIn(browser, options, audience) {
+  const role = roleFor[audience.group];
+  const email = process.env[`E2E_${role}_EMAIL`];
+  const password = process.env[`E2E_${role}_PASSWORD`];
+  if (!email || !password) throw new Error(`No test account for ${role.toLowerCase()}: set E2E_${role}_EMAIL and E2E_${role}_PASSWORD (a confirmed Supabase account with that role).`);
   const ctx = await browser.newContext(options);
-  await ctx.addInitScript(([k, v]) => { try { localStorage.setItem(k, v); } catch {} }, ["rtr:audience:v1", JSON.stringify(audience)]);
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/join?mode=login`);
+  await page.getByLabel("Email").fill(email);
+  await page.getByLabel("Password").fill(password);
+  await page.getByRole("button", { name: "Log in" }).last().click();
+  await page.waitForURL((url) => !url.pathname.startsWith("/join"), { timeout: 20000 });
+  await page.close();
   return ctx;
 }
 export const TEAM = { group: "team", name: "Demo presenter" };

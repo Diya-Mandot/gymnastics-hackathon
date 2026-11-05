@@ -8,10 +8,10 @@ import { SectionHeading } from "@/components/Section";
 import { athletes } from "@/lib/seed";
 
 const paths = [
-  { href: "/signin?as=supporter", title: "I’m a supporter", body: "Fans, alumni, parents and season-ticket holders: give, subscribe, or buy a fan experience.", img: "/images/fan-signs-2.jpg", alt: "A family with handmade Red Rocks signs in the stands" },
-  { href: "/signin?as=business", title: "I’m a business", body: "Local and national brands: get matched and fund an Impact Routine with measured results.", img: "/images/arena-scoreboard.jpg", alt: "The Huntsman Center scoreboard with sponsor signage" },
-  { href: "/signin?as=athlete", title: "I’m an athlete", body: "Turn your story and community work into NIL opportunities you approve.", img: "/images/team-wrth.jpg", alt: "The Red Rocks team in Who Rocks the House shirts" },
-  { href: "/signin?as=team", title: "I’m on the WRTH team", body: "Run sponsors, campaigns, approvals and revenue in one workspace.", img: "/images/fans-utes.jpg", alt: "Fans in red with arms raised under arena lights" },
+  { href: "/join?role=fan", title: "I’m a supporter", body: "Fans, alumni, parents and season-ticket holders: give, subscribe, or buy a fan experience.", img: "/images/fan-signs-2.jpg", alt: "A family with handmade Red Rocks signs in the stands" },
+  { href: "/join?role=business", title: "I’m a business", body: "Local and national brands: get matched and fund an Impact Routine with measured results.", img: "/images/arena-scoreboard.jpg", alt: "The Huntsman Center scoreboard with sponsor signage" },
+  { href: "/join?role=athlete", title: "I’m an athlete", body: "Turn your story and community work into NIL opportunities you approve.", img: "/images/team-wrth.jpg", alt: "The Red Rocks team in Who Rocks the House shirts" },
+  { href: "/join?mode=login&role=staff", title: "I’m on the WRTH team", body: "Run sponsors, campaigns, approvals and revenue in one workspace.", img: "/images/fans-utes.jpg", alt: "Fans in red with arms raised under arena lights" },
 ];
 
 const routineParts = [

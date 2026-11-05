@@ -17,6 +17,7 @@ function RewardsPage() {
     { title: "Full Roster", detail: "Collect all four athlete cards.", earned: ["avery", "mia", "sofia", "jordan"].every((slug) => state.cards.includes(slug)) },
     { title: "Meet Night Champion", detail: "Complete all four rotation missions.", earned: state.cards.includes("meet-night-champion") },
     { title: "Crowd Builder", detail: "Help fans unlock the collective participation reward.", earned: state.milestoneCompleted },
+    { title: "Social Amplifier", detail: "Share a Rock the Arena moment.", earned: state.socialShares >= 1 },
   ];
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-8">

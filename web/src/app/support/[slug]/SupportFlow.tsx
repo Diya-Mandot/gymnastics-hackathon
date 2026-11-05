@@ -11,6 +11,7 @@ import { Wordmark } from "@/components/Wordmark";
 import { useLive } from "@/hooks/useLive";
 import { useArena } from "@/lib/arena";
 import { authClient, authConfigured } from "@/lib/auth";
+import { SocialShare } from "@/components/live/SocialShare";
 import { usd } from "@/lib/labels";
 import type { Athlete } from "@/lib/types";
 
@@ -208,6 +209,7 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
             </section>
 
             <div className="mt-8 grid gap-2">
+              <SocialShare title="I'm backing the routine" detail={`I just backed ${athlete.firstName} at Rock the Arena.`} entityId={`support-${athlete.slug}`} />
               <ShareButton name={athlete.firstName} />
               <Link href={`/athletes/${athlete.slug}`} className="btn btn-line w-full">
                 Watch {athlete.firstName}’s story

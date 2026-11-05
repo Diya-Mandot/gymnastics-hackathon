@@ -28,7 +28,8 @@ export type ArenaEventType =
   | "fundraising_goal_changed"
   | "spotlight_dismissed"
   | "crowd_milestone_completed"
-  | "mission_completed";
+  | "mission_completed"
+  | "social_share";
 
 export type ArenaEvent = {
   id: string;
@@ -94,6 +95,7 @@ export type ArenaView = ArenaData & {
   fanId: string;
   points: number;
   supportTotal: number;
+  socialShares: number;
   completed: string[];
   cards: string[];
   crowd: number;
@@ -424,17 +426,18 @@ export function toArenaView(data: ArenaData, fanId: string): ArenaView {
   const fanEvents = data.events.filter((event) => event.fanId === fanId);
   const points =
     Object.values(personalAttempts).reduce((total, attempt) => total + attempt.pointsAwarded, 0) +
-    fanEvents.filter((event) => event.type === "participation_bonus").reduce((total, event) => total + (event.amount ?? 0), 0);
+    fanEvents.filter((event) => event.type === "participation_bonus" || event.type === "social_share").reduce((total, event) => total + (event.amount ?? 0), 0);
   const cards = [...new Set(fanEvents.filter((event) => event.type === "card_unlocked").map((event) => event.entityId))];
   const supportTotal = fanEvents
     .filter((event) => event.type === "fan_contribution")
     .reduce((total, event) => total + (event.amount ?? 0), 0);
+  const socialShares = fanEvents.filter((event) => event.type === "social_share").length;
   const leaderboardPoints = new Map<string, { points: number; completed: number }>();
   for (const event of data.events) {
     if (!event.fanId || !data.leaderboardOptIns.includes(event.fanId)) continue;
     const row = leaderboardPoints.get(event.fanId) ?? { points: 0, completed: 0 };
     if (event.type === "challenge_completed") row.completed += 1;
-    if (event.type === "participation_bonus") row.points += event.amount ?? 0;
+    if (event.type === "participation_bonus" || event.type === "social_share") row.points += event.amount ?? 0;
     leaderboardPoints.set(event.fanId, row);
   }
   for (const [participantId, attempts] of Object.entries(data.attempts)) {
@@ -450,6 +453,7 @@ export function toArenaView(data: ArenaData, fanId: string): ArenaView {
     fanId,
     points,
     supportTotal,
+    socialShares,
     completed: Object.keys(personalAttempts),
     cards,
     crowd: getCrowdProgress(data),

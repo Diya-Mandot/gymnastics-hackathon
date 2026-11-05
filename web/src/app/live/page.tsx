@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { athletes, seedCampaign } from "@/lib/seed";
 import { useArena } from "@/lib/arena";
 import { authClient, authConfigured } from "@/lib/auth";
+import { SocialShare } from "@/components/live/SocialShare";
 import { demoBaseline, type ArenaEventType, type SpotlightType } from "@/lib/arena-model";
 
 const routineQuestions = [
@@ -328,6 +329,7 @@ function RewardClaim({ name, close }: { name: string; close: () => void }) {
       <p className="mt-4 text-muted">Create a free profile to save this meet-night reward, build your collection, and receive approved WRTH updates. Free gameplay stays open either way.</p>
       <Link href="/join" onClick={() => localStorage.setItem("rtr:pending-reward", name)} className="btn btn-red mt-6 w-full">Sign up to claim</Link>
       <Link href="/join" onClick={() => localStorage.setItem("rtr:pending-reward", name)} className="mt-4 block w-full text-center text-sm font-semibold text-red-lit">Log in instead</Link>
+      <div className="mt-4"><SocialShare title={`I unlocked ${name}`} detail="Can you unlock yours at Rock the Arena?" entityId={`reward-${name}`} /></div>
       <button onClick={close} className="mt-4 w-full text-sm text-muted">Keep playing without saving</button>
     </section>
   </div>;

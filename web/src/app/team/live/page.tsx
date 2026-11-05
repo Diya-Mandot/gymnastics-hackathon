@@ -1,0 +1,3 @@
+"use client";
+import { RoleGate } from "@/components/live/RoleGate"; import Link from "next/link";
+export default function TeamLive(){return <RoleGate roles={["staff"]}>{()=> <main className="mx-auto max-w-5xl px-4 py-10 sm:px-8"><p className="label text-red-lit">Authorized WRTH staff</p><h1 className="mt-2 font-display text-6xl text-ink">Meet controller</h1><div className="mt-8 grid gap-4 md:grid-cols-2">{["Start Demo Meet","Advance to Rotation 3","Activate Routine IQ","Change Spotlight to Avery","Reset Demo"].map(x=><button key={x} className="card p-6 text-left font-display text-3xl text-ink hover:border-red">{x}</button>)}</div><Link className="btn btn-red mt-8" href="/team/live/analytics">Open analytics</Link></main>}</RoleGate>}

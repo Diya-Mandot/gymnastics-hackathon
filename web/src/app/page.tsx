@@ -6,6 +6,7 @@ import { HeroLive } from "@/components/HeroLive";
 import { PhotoStrip } from "@/components/PhotoStrip";
 import { SectionHeading } from "@/components/Section";
 import { athletes } from "@/lib/seed";
+import { redirect } from "next/navigation";
 
 const paths = [
   { href: "/athletes", title: "I’m a fan", body: "Watch athlete stories, scan at meets, share a confidence note.", img: "/images/fans-utes.jpg", alt: "Fans in red with arms raised under arena lights" },
@@ -31,7 +32,7 @@ const path = [
   { label: "Year 3", value: "$2M" },
 ];
 
-export default function Home() {
+export function LegacyHome() {
   const favorites = athletes.filter((a) => a.featureType === "fan-favorite");
   const rising = athletes.filter((a) => a.featureType === "rising-routine");
 
@@ -223,6 +224,10 @@ export default function Home() {
       </section>
     </>
   );
+}
+
+export default function Home() {
+  redirect("/join");
 }
 
 function Photo({ src, alt, caption, className = "" }: { src: string; alt: string; caption: string; className?: string }) {

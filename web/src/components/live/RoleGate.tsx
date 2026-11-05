@@ -1,0 +1,5 @@
+"use client";
+import Link from "next/link";
+import { useEffect,useState } from "react";
+import { authClient,authConfigured,loadAuthProfile,type AppRole, type AuthProfile } from "@/lib/auth";
+export function RoleGate({roles,children}:{roles:AppRole[];children:React.ReactNode|((p:AuthProfile)=>React.ReactNode)}){const [p,setP]=useState<AuthProfile|null|undefined>(undefined);useEffect(()=>{if(!authConfigured){setP(null);return}authClient().auth.getUser().then(async({data})=>setP(data.user?await loadAuthProfile(data.user):null))},[]);if(p===undefined)return <p className="p-8 text-muted">Loading your profile…</p>;if(!p||!roles.includes(p.role))return <div className="mx-auto max-w-xl px-5 py-24"><p className="label">Reward locked</p><h1 className="mt-3 font-display text-6xl text-ink">Sign in to <em>claim it.</em></h1><p className="mt-4 text-muted">Create a profile or log in to access this experience.</p><Link href="/join" className="btn btn-red mt-7">Sign up or log in</Link></div>;return <>{typeof children==="function"?children(p):children}</>}

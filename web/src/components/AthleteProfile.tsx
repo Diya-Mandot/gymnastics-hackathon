@@ -13,7 +13,6 @@ import { defaultBrief, scoreAthlete } from "@/lib/match";
 import { sponsorPackages, supporterTiers } from "@/lib/seed";
 import type { Athlete } from "@/lib/types";
 import { AthletePortrait } from "./AthletePortrait";
-import { BackLink } from "./BackLink";
 import { ChalkArc } from "./ChalkArc";
 import { DemoBadge, FeatureBadge } from "./Badges";
 import { MatchRing, ScoreBreakdown } from "./ScoreBreakdown";
@@ -28,9 +27,6 @@ export function AthleteProfile({ athlete }: { athlete: Athlete }) {
       {/* Hero: text left, framed official portrait right (portrait first on phones) */}
       <header className="relative overflow-hidden bg-paper">
         <div className="pointer-events-none absolute -right-40 -top-40 h-[620px] w-[620px] rounded-full bg-[radial-gradient(closest-side,rgb(204_0_0/0.22),transparent)]" aria-hidden="true" />
-        <div className="relative mx-auto max-w-7xl px-4 pt-5 sm:px-8 sm:pt-7">
-          <BackLink fallback="/athletes" label="All athletes" />
-        </div>
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-6 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:pb-24 lg:pt-4">
           <figure className="relative mx-auto w-full max-w-[300px] sm:max-w-[360px] lg:order-2 lg:max-w-[440px]">
             <ChalkArc className="absolute -left-10 -top-8 h-[60%] w-[120%] opacity-40" dashed />

@@ -11,6 +11,7 @@ export const authConfigured = Boolean(url && key);
 export function authClient() { if (!url || !key) throw new Error("Supabase Auth is not configured."); return client ??= createClient(url, key); }
 export async function loadAuthProfile(user: User): Promise<AuthProfile | null> {
   const { data } = await authClient().from("profiles").select("id,email,first_name,role").eq("id", user.id).maybeSingle();
-  if (!data) return null;
-  return { id: data.id, email: data.email, firstName: data.first_name, role: data.role as AppRole };
+  const profile = data as unknown as { id: string; email: string; first_name: string; role: AppRole } | null;
+  if (!profile) return null;
+  return { id: profile.id, email: profile.email, firstName: profile.first_name, role: profile.role };
 }

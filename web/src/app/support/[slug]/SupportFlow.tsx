@@ -9,6 +9,7 @@ import { CampaignProgress, LiveDot } from "@/components/CampaignProgress";
 import { RockedCard } from "@/components/RockedCard";
 import { Wordmark } from "@/components/Wordmark";
 import { useLive } from "@/hooks/useLive";
+import { useArena } from "@/lib/arena";
 import { usd } from "@/lib/labels";
 import type { Athlete } from "@/lib/types";
 
@@ -18,6 +19,7 @@ type Phase = "choose" | "sending" | "done" | "error";
 
 export function SupportFlow({ athlete }: { athlete: Athlete }) {
   const { campaign, give } = useLive();
+  const arena = useArena();
   const [amount, setAmount] = useState(10);
   const [custom, setCustom] = useState("");
   const [name, setName] = useState("");
@@ -38,6 +40,7 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
         supporterName: supporter,
         supportType: finalAmount >= 100 ? "Impact Champion" : "One-time supporter",
       });
+      arena.track("fan_contribution", `support-${athlete.slug}-${Date.now()}`, { amount: finalAmount });
       setSupporterNo(e.state.campaign.supporters);
       setPhase("done");
       window.scrollTo({ top: 0, behavior: "smooth" });

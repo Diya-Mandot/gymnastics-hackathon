@@ -32,7 +32,7 @@ const path = [
   { label: "Year 3", value: "$2M" },
 ];
 
-export function LegacyHome() {
+function LegacyHome() {
   const favorites = athletes.filter((a) => a.featureType === "fan-favorite");
   const rising = athletes.filter((a) => a.featureType === "rising-routine");
 

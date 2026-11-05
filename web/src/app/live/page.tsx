@@ -1,6 +1,7 @@
 "use client";
 /* eslint-disable react/no-unescaped-entities */
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { athletes, seedCampaign } from "@/lib/seed";
@@ -98,30 +99,35 @@ export default function Live() {
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-4 pb-28 pt-7 sm:px-8">
+    <main className="pb-28 lg:pb-16">
       {rewardPrompt && <RewardClaim name={rewardPrompt} close={() => setRewardPrompt(null)} />}
-      {arena.error && <div role="alert" className="mb-5 flex items-start justify-between gap-4 rounded-xl border border-red/30 bg-red-soft p-4 text-sm text-ink"><p>{arena.error}</p><button className="font-semibold text-red-lit" onClick={arena.clearError}>Dismiss</button></div>}
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="label text-red-lit">ROCK THE ARENA · Red Rocks Meet Night</p>
-          <h1 className="mt-2 font-display text-[clamp(44px,6vw,76px)] text-ink">Every rotation. <em>Every fan.</em></h1>
-          <p className="mt-3 text-sm text-muted">
-            Current rotation: {state.rotation} of 4 · {question.apparatus} · Status: {state.status.toUpperCase()}
-          </p>
-          <p className="mt-1 text-xs text-faint">Demo simulation · no live scoring connection · free gameplay</p>
+      {arena.error && <div role="alert" className="mx-auto mb-5 mt-4 flex max-w-7xl items-start justify-between gap-4 rounded-xl border border-red/30 bg-red-soft p-4 text-sm text-ink"><p>{arena.error}</p><button className="font-semibold text-red-lit" onClick={arena.clearError}>Dismiss</button></div>}
+      <header className="on-photo relative overflow-hidden">
+        <Image src="/images/arena-fireworks.jpg" alt="" fill priority sizes="100vw" className="object-cover object-[center_40%]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(15_14_13/0.92)_0%,rgb(15_14_13/0.7)_55%,rgb(120_0_0/0.35)_100%),linear-gradient(180deg,transparent_60%,#0f0e0d_100%)]" />
+        <div className="relative mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-6 px-4 pb-10 pt-10 sm:px-8 sm:pt-14">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full bg-red px-3 py-1 text-xs font-semibold text-white">
+              <span className="h-2 w-2 animate-live rounded-full bg-white" aria-hidden="true" />
+              {state.status === "live" ? "Live now" : state.status.toUpperCase()} · Rotation {state.rotation} of 4 · {question.apparatus}
+            </span>
+            <h1 className="mt-4 font-display text-[clamp(44px,6vw,84px)] leading-[0.95] text-white">Every rotation. <em className="text-red-lit">Every fan.</em></h1>
+            <p className="mt-3 max-w-lg text-[15px] text-white/80">Free games during the meet. Answer, cheer and collect cards for points and prizes.</p>
+            <p className="mt-2 text-xs text-white/55">Demo simulation · no live scoring connection · free gameplay</p>
+          </div>
+          <dl className="grid grid-cols-3 gap-2">
+            <Metric value={state.points} label="Points" tone="gold" />
+            <Metric value={state.completed.length} label="Challenges" tone="sky" />
+            <Metric value={`${state.cards.length}/5`} label="Cards" tone="red" />
+          </dl>
         </div>
-        <dl className="grid grid-cols-3 divide-x divide-line rounded-2xl border border-line bg-surface">
-          <Metric value={state.points} label="Points" />
-          <Metric value={state.completed.length} label="Challenges" />
-          <Metric value={`${state.cards.length}/5`} label="Cards" />
-        </dl>
       </header>
 
-      <div className="mt-7 grid gap-5 lg:grid-cols-[1.7fr_0.8fr]">
+      <div className="mx-auto mt-2 grid max-w-7xl gap-5 px-4 sm:px-8 lg:grid-cols-[1.7fr_0.8fr]">
         <section className="space-y-5">
-          <section className="card p-6" aria-labelledby="routine-title">
+          <section className="card relative overflow-hidden !border-red/40 bg-[linear-gradient(135deg,rgb(204_0_0/0.16),transparent_55%)] p-6" aria-labelledby="routine-title">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="label">Current challenge · Routine IQ</p>
+              <p className="label !text-red-lit">Current challenge · Routine IQ</p>
               <span className="tag">{question.sponsored ? "Sponsored by BrightPath · demo" : "+100 points for a correct answer"}</span>
             </div>
             <h2 id="routine-title" className="mt-3 font-display text-4xl text-ink">{question.question}</h2>
@@ -180,8 +186,8 @@ export default function Live() {
           )}
 
           <div className="grid gap-5 md:grid-cols-2">
-            <section className="card p-5">
-              <p className="label">Rotation mission · {question.apparatus}</p>
+            <section className="card border-t-4 !border-t-sky p-5">
+              <p className="label !text-sky">Rotation mission · {question.apparatus}</p>
               <h2 className="mt-2 font-display text-3xl text-ink">{mission.title}</h2>
               <p className="mt-2 text-sm text-muted">{mission.source} Complete all four meet missions to earn a free Meet Night Champion badge.</p>
               {mission.id === "bars" && <Link onClick={() => arena.track("athlete_story_view", "avery")} href="/athletes/avery" className="mt-4 inline-block text-sm font-semibold text-red-lit">Watch Avery's story →</Link>}
@@ -189,12 +195,12 @@ export default function Live() {
                 <button disabled={missionDone} onClick={() => arena.completeMission(mission.id, state.rotation)} className="btn btn-line mt-4 disabled:opacity-50">{missionDone ? "Mission complete" : "Complete rotation mission"}</button>
               </div>
             </section>
-            <section className="card p-5">
-              <p className="label">Collective fan challenge</p>
+            <section className="card border-t-4 !border-t-gold p-5">
+              <p className="label !text-gold">Collective fan challenge</p>
               <h2 className="mt-2 font-display text-3xl text-ink">Raise the roof</h2>
               <p className="mt-2 text-sm text-muted">A shared participation target—not a prediction about athlete performance.</p>
               <div className="mt-4 h-3 overflow-hidden rounded-full bg-sand" role="progressbar" aria-label="Eligible fan challenges completed" aria-valuenow={Math.min(state.crowd, state.milestoneTarget)} aria-valuemin={0} aria-valuemax={state.milestoneTarget}>
-                <div className="h-full bg-red" style={{ width: `${Math.min(100, state.crowd / state.milestoneTarget * 100)}%` }} />
+                <div className="h-full rounded-full bg-[linear-gradient(90deg,var(--color-red),var(--color-gold))]" style={{ width: `${Math.min(100, state.crowd / state.milestoneTarget * 100)}%` }} />
               </div>
               <p className="mt-2 text-sm text-muted">{state.crowd.toLocaleString()} / {state.milestoneTarget.toLocaleString()} eligible challenges complete</p>
               <p className="mt-2 text-xs text-faint">{state.milestoneCompleted ? "Pre-approved demo thank-you story unlocked." : "Reward: pre-approved athlete thank-you story."} Starting point is simulated demo activity.</p>
@@ -203,10 +209,19 @@ export default function Live() {
             </section>
           </div>
 
-          <section className="card p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          <section className="card overflow-hidden p-5">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div><p className="label">Collect the roster</p><h2 className="mt-2 font-display text-3xl text-ink">{state.cards.length} of 5 collectible cards</h2></div>
-              <Link href="/live/cards" className="btn btn-line">View cards</Link>
+              <div className="flex items-center gap-4">
+                <div className="flex -space-x-3" aria-hidden="true">
+                  {athletes.map((a) => (
+                    <span key={a.slug} className={`relative h-12 w-12 overflow-hidden rounded-full border-2 border-paper bg-white ${state.cards.includes(a.slug) ? "" : "opacity-60 grayscale"}`}>
+                      {a.photo && <Image src={a.photo} alt="" fill sizes="48px" className="object-cover object-[50%_20%]" />}
+                    </span>
+                  ))}
+                </div>
+                <Link href="/live/cards" className="btn btn-red">View cards</Link>
+              </div>
             </div>
             <p className="mt-2 text-sm text-muted">Cards are free, earned through participation, and never ranked by follower count.</p>
           </section>
@@ -224,20 +239,20 @@ export default function Live() {
           />
         </section>
         <aside className="space-y-5">
-          <section className="card p-5">
-            <p className="label">Meet-night progress</p>
+          <section className="card border-l-4 !border-l-sky p-5">
+            <p className="label !text-sky">Meet-night progress</p>
             <h2 className="mt-2 font-display text-3xl text-ink">{question.apparatus}</h2>
             <p className="mt-2 text-sm text-muted">Rotation {state.rotation} of 4 · {state.status.toUpperCase()}</p>
             <Link href="/live/meet" className="btn btn-line mt-4 w-full">Meet schedule & reward</Link>
           </section>
-          <section className="card p-5">
-            <p className="label">Your free rewards</p>
-            <p className="mt-2 font-display text-4xl text-ink">{state.points} points</p>
+          <section className="card bg-[linear-gradient(160deg,var(--color-gold-soft),var(--color-surface)_70%)] p-5">
+            <p className="label !text-gold">Your free rewards</p>
+            <p className="mt-2 font-display text-5xl text-gold">{state.points} <span className="text-2xl text-ink">points</span></p>
             <p className="mt-2 text-sm text-muted">{state.completed.length} unique challenges · {state.cards.length} cards</p>
             <Link href="/live/rewards" className="btn btn-line mt-4 w-full">See progress & badges</Link>
           </section>
-          <section className="card p-5">
-            <p className="label">Meet-Night Partner</p>
+          <section className="card border-l-4 !border-l-red p-5">
+            <p className="label !text-red-lit">Meet-Night Partner</p>
             <h2 className="mt-2 font-display text-3xl text-ink">$5,000 proposed package</h2>
             <p className="mt-2 text-sm text-muted">Illustrative price only. Athlete NIL compensation, production, activation, and servicing are accounted for separately.</p>
             <Link href="/business" className="mt-4 inline-block text-sm font-semibold text-red-lit">See partner options →</Link>
@@ -245,7 +260,7 @@ export default function Live() {
         </aside>
       </div>
 
-      <nav aria-label="Meet-night navigation" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 px-2 py-2 backdrop-blur">
+      <nav aria-label="Meet-night navigation" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 px-2 py-2 backdrop-blur lg:hidden">
         <div className="mx-auto flex max-w-2xl justify-between gap-1">
           <Bottom href="/live" label="Play" />
           <Bottom href="/live/cards" label="Cards" />
@@ -259,8 +274,15 @@ export default function Live() {
   );
 }
 
-function Metric({ value, label }: { value: string | number; label: string }) {
-  return <div className="px-3 py-3 text-center"><p className="font-display text-2xl text-ink">{value}</p><p className="text-[10px] uppercase tracking-wide text-muted">{label}</p></div>;
+const toneClass = { gold: "text-gold", sky: "text-sky", red: "text-red-lit" } as const;
+
+function Metric({ value, label, tone }: { value: string | number; label: string; tone: keyof typeof toneClass }) {
+  return (
+    <div className="min-w-[92px] rounded-2xl border border-white/15 bg-black/45 px-4 py-3 text-center backdrop-blur">
+      <dd className={`font-display text-3xl ${toneClass[tone]}`}>{value}</dd>
+      <dt className="mt-0.5 text-[10px] uppercase tracking-wide text-white/70">{label}</dt>
+    </div>
+  );
 }
 
 function Bottom({ href, label }: { href: string; label: string }) {
@@ -305,7 +327,22 @@ function Spotlight({
     if (type === "support") return <><p className="label">WRTH Support · optional</p><h2 className="mt-3 font-display text-4xl text-ink">Back the routine.</h2><p className="mt-3 text-sm leading-relaxed text-muted">Help create more opportunities for Red Rocks gymnasts. A $10 demo contribution is simulated; gameplay and rewards never depend on giving.</p><Link href="/support/avery" onClick={() => onAction("supporter_cta_click")} className="btn btn-red mt-5 w-full">Explore optional support</Link></>;
     if (type === "fundraising") return <><p className="label">Simulated fundraising progress</p><h2 className="mt-3 font-display text-4xl text-ink">{seedCampaign.name}</h2><p className="mt-3 text-sm text-muted">Demo campaign total: ${currentFundraising.toLocaleString()} of ${fundraisingGoal.toLocaleString()} · sample supporters. This is not a verified live fundraising goal.</p><div className="mt-4 h-3 overflow-hidden rounded-full bg-sand"><div className="h-full bg-red" style={{width:`${Math.min(100,currentFundraising/fundraisingGoal*100)}%`}}/></div><Link href="/support/avery" onClick={() => onAction("supporter_cta_click")} className="btn btn-line mt-5 w-full">Learn about supporting Avery</Link></>;
     if (type === "milestone") return <><p className="label">Meet Milestone</p><h2 className="mt-3 font-display text-4xl text-ink">{stateMilestoneTitle}</h2><p className="mt-3 text-sm text-muted">Fans collectively unlock pre-approved content through eligible participation. The demo target is simulated and does not influence competition.</p><Link href="/live/meet" className="btn btn-line mt-5 w-full">See the fan milestone</Link></>;
-    return <><p className="label">Athlete Spotlight · Behind the Routine</p><h2 className="mt-3 font-display text-4xl text-ink">Meet {athlete.name}.</h2><p className="mt-3 text-sm leading-relaxed text-muted">{athlete.tagline} {athlete.quote}</p><Link href="/athletes/avery" onClick={() => onAction("athlete_story_view")} className="btn btn-line mt-5 w-full">Watch Avery's story</Link><Link href="/athletes/avery" onClick={() => onAction("athlete_profile_view")} className="mt-3 block text-center text-sm font-semibold text-red-lit">View athlete profile</Link></>;
+    return (
+      <div className="grid items-center gap-5 sm:grid-cols-[150px_1fr]">
+        <div className="relative mx-auto aspect-[4/5] w-[150px] overflow-hidden rounded-2xl border border-line bg-white">
+          {athlete.photo && <Image src={athlete.photo} alt={`${athlete.name}, Utah Red Rocks gymnast`} fill sizes="150px" className="object-cover object-[50%_20%]" />}
+        </div>
+        <div>
+          <p className="label !text-red-lit">Athlete Spotlight · Behind the Routine</p>
+          <h2 className="mt-2 font-display text-4xl text-ink">Meet {athlete.name}.</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted">{athlete.tagline} <span className="text-ink/85">“{athlete.quote}”</span></p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href={`/athletes/${athlete.slug}`} onClick={() => onAction("athlete_story_view")} className="btn btn-red !py-2.5 text-sm">Watch {athlete.firstName}’s story</Link>
+            <Link href={`/athletes/${athlete.slug}`} onClick={() => onAction("athlete_profile_view")} className="btn btn-line !py-2.5 text-sm">View profile</Link>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return <aside className="card h-fit p-6">

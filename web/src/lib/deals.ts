@@ -68,6 +68,10 @@ function startLocal(error: string | null) {
 
 const toPayload = (d: Deal, sortOrder: number) => ({ ...d, sortOrder });
 
+/** Supabase errors are plain objects, not Error instances. */
+const messageOf = (e: unknown) =>
+  e instanceof Error ? e.message : typeof e === "object" && e && "message" in e ? String((e as { message: unknown }).message) : String(e);
+
 async function loadRemote(): Promise<Deal[]> {
   const db = getSupabaseClient()!;
   const { data, error } = await db.from("demo_deals").select(DEALS_COLUMNS).order("sort_order").order("created_at");
@@ -84,7 +88,7 @@ async function refresh() {
   try {
     emit({ deals: await loadRemote(), error: null });
   } catch (e) {
-    emit({ error: e instanceof Error ? e.message : "Could not load deals." });
+    emit({ error: messageOf(e) || "Could not load deals." });
   }
 }
 
@@ -100,7 +104,7 @@ async function startRemote() {
     emit({ deals, sync: "supabase", error: null });
   } catch (e) {
     // Most likely the demo_deals migration hasn't been applied; keep the demo running locally.
-    const message = e instanceof Error ? e.message : String(e);
+    const message = messageOf(e);
     console.warn("[deals] Supabase unavailable, using this browser only:", message);
     startLocal(`Deals are saved in this browser only (${message}).`);
     return;
@@ -120,15 +124,15 @@ function start() {
 // ---------- mutations ----------
 
 function persist(deal: Deal) {
-  // While the first load is still running, assume Supabase (if it is configured) rather than a stray local copy.
+  // Always keep a local copy, so a change made while Supabase is still loading (or unreachable) is never lost.
+  writeLocal(snap.deals);
   if (snap.sync === "supabase" || (snap.sync === "loading" && getSupabaseClient())) {
     const sortOrder = snap.deals.findIndex((d) => d.id === deal.id);
     saveRemote(deal, Math.max(0, sortOrder)).catch((e) => {
-      emit({ error: `Couldn't save "${deal.sponsor}": ${e instanceof Error ? e.message : e}` });
+      if (snap.sync !== "supabase") return; // fell back to this browser; the local copy above already has it
+      emit({ error: `Couldn't save "${deal.sponsor}": ${messageOf(e)}` });
       void refresh(); // roll the optimistic change back to what the database has
     });
-  } else {
-    writeLocal(snap.deals);
   }
 }
 

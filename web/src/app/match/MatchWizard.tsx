@@ -19,6 +19,14 @@ type Step = {
   options: { value: string | number; label: string; hint?: string }[];
 };
 
+// Each answer gets its own accent so the quiz isn't a wall of identical grey boxes.
+const optionTones = [
+  { bar: "bg-red", hover: "hover:border-red hover:bg-red/10" },
+  { bar: "bg-sky", hover: "hover:border-sky hover:bg-sky-soft" },
+  { bar: "bg-gold", hover: "hover:border-gold hover:bg-gold-soft" },
+  { bar: "bg-green", hover: "hover:border-green hover:bg-green/10" },
+];
+
 const steps: Step[] = [
   {
     key: "goal",
@@ -179,17 +187,18 @@ export function MatchWizard({ athletes }: { athletes: Athlete[] }) {
           >
             <legend className="font-display text-5xl text-ink sm:text-6xl">{step.question}</legend>
             <div className="mt-10 grid gap-3 sm:grid-cols-2">
-              {step.options.map((o) => {
+              {step.options.map((o, oi) => {
                 const selected = brief[step.key] === o.value;
                 return (
                   <button
                     key={String(o.value)}
                     onClick={() => choose(o.value)}
-                    className={`group flex min-h-[80px] items-center justify-between gap-4 rounded-[18px] border px-6 py-4 text-left transition-colors ${
-                      selected ? "border-ink bg-ink text-paper" : "border-line bg-surface text-ink hover:border-ink"
+                    className={`group flex min-h-[80px] items-center justify-between gap-4 rounded-[18px] border px-5 py-4 text-left transition-colors ${
+                      selected ? "border-ink bg-ink text-paper" : `border-line bg-surface text-ink ${optionTones[oi % optionTones.length].hover}`
                     }`}
                   >
-                    <span>
+                    <span aria-hidden="true" className={`h-10 w-1.5 shrink-0 rounded-full ${optionTones[oi % optionTones.length].bar}`} />
+                    <span className="flex-1">
                       <span className="block text-[17px] font-semibold">{o.label}</span>
                       {o.hint && <span className={`text-sm ${selected ? "text-paper/60" : "text-muted"}`}>{o.hint}</span>}
                     </span>

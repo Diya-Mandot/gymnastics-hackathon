@@ -32,7 +32,9 @@ export async function fanToAdmin(browser) {
   check(Date.now() - t0 < 20000, `phone flow under 20 seconds (${Date.now() - t0} ms)`);
   await laptop.getByText(/Demo Judge backed Avery Neff with \$10\./).waitFor({ timeout: 20000 });
   await laptop.getByText("New gift: $10").waitFor({ timeout: 10000 });
-  check(await laptop.getByText(/Milestone: \$8,250 raised/).count() === 1, "admin gets a gift alert and an every-$50 milestone alert");
+  // The milestone alert can arrive a beat after the gift alert; wait for it rather than sampling once.
+  const milestone = await laptop.getByText(/Milestone: \$8,250 raised/).waitFor({ timeout: 5000 }).then(() => true, () => false);
+  check(milestone && (await laptop.getByText(/Milestone: \$8,250 raised/).count()) === 1, "admin gets a gift alert and an every-$50 milestone alert");
   await laptop.waitForTimeout(1500);
   const [raised, supporters] = await kpis(laptop);
   check(raised === "$8,250" && supporters === "187", "admin totals moved to $8,250 and 187 supporters");
@@ -145,7 +147,7 @@ export async function audiences(browser) {
     await page.waitForTimeout(800);
     return page;
   };
-  const gated = async (page) => (await page.getByText("This area isn’t part of your view.").count()) > 0;
+  const gated = async (page) => (await page.getByTestId("audience-gate").count()) > 0;
 
   let page = await visit(null, "/sponsors");
   check(await gated(page), "signed out: Sponsor Engine asks who you are");

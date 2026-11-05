@@ -206,18 +206,21 @@ export const tasks: Task[] = [
 
 export const supporterTiers: SupporterTier[] = [
   { id: "free", name: "Red Rocks Fan", price: "Free", perks: ["Athlete stories", "Campaign updates", "QR activations", "Sponsor offers"] },
-  { id: "chalk", name: "Chalk Circle", price: "$10/mo", perks: ["Digital thank-you card", "Athlete update video", "Early campaign access"] },
-  { id: "partner", name: "Routine Partner", price: "$25/mo", perks: ["Personal athlete-life videos", "Family campaign offers", "Quarterly behind-the-scenes"] },
+  { id: "chalk", name: "Chalk Circle", price: "$10/mo", perks: ["Digital thank-you card", "Athlete update video", "Early campaign access", "Unlocks fan experiences month by month"] },
+  { id: "partner", name: "Routine Partner", price: "$25/mo", perks: ["Personal athlete-life videos", "Family campaign offers", "Quarterly behind-the-scenes", "Unlocks fan experiences month by month"] },
   { id: "champion", name: "Impact Champion", price: "$100+", perks: ["Athlete thank-you video request", "Digital impact report", "Campaign recognition"] },
 ];
 
 // Things supporters can buy or fund, smaller than a business Impact Routine. Demo content; no payment is processed.
+// Ordered cheapest first. `unlockMonth` is when a monthly supporter gets access (1 = right away).
 export const fanExperiences = [
-  { id: "celebration", name: "Celebration video", price: "$75", body: "A 15–30 second birthday, graduation or good-luck message from an athlete." },
-  { id: "meet-greet", name: "Post-meet meet & greet", price: "$40", body: "Join a small group on the floor after a home meet for photos and autographs." },
-  { id: "signed-card", name: "Signed trading card", price: "$20", body: "A printed card signed by the athlete, mailed to you." },
-  { id: "practice", name: "Open-practice pass", price: "$30", body: "Watch a Red Rocks practice from the stands with a WRTH host." },
-];
+  { id: "signed-card", name: "Signed trading card", price: "$20", priceValue: 20, unlockMonth: 1, body: "A printed card signed by the athlete, mailed to you." },
+  { id: "practice", name: "Open-practice pass", price: "$30", priceValue: 30, unlockMonth: 2, body: "Watch a Red Rocks practice from the stands with a WRTH host." },
+  { id: "meet-greet", name: "Post-meet meet & greet", price: "$40", priceValue: 40, unlockMonth: 3, body: "Join a small group on the floor after a home meet for photos and autographs." },
+  { id: "celebration", name: "Celebration video", price: "$75", priceValue: 75, unlockMonth: 6, body: "A 15–30 second birthday, graduation or good-luck message from an athlete." },
+].sort((a, b) => a.priceValue - b.priceValue);
+
+export const unlockLabel = (month: number) => (month <= 1 ? "Right away" : `After ${month} months`);
 
 export const communityActivities = [
   { id: "clinic", athleteSlug: "avery", name: "Confidence clinic for beginner gymnasts", partner: "Peak Confidence Youth Club", goal: 1500, raised: 1120 },

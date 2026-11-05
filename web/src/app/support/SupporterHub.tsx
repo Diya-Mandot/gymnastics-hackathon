@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useAudience } from "@/components/AudienceProvider";
 import { supporterTypes } from "@/lib/audience";
-import { athleteBySlug, communityActivities, fanExperiences } from "@/lib/seed";
+import { athleteBySlug, communityActivities, fanExperiences, unlockLabel } from "@/lib/seed";
 
 const usd = (n: number) => `$${n.toLocaleString()}`;
 
@@ -33,11 +33,17 @@ export function SupporterOffers() {
       <section id="experiences" className="mx-auto max-w-7xl scroll-mt-16 px-4 py-24 sm:px-8">
         <p className="text-sm font-semibold text-red-lit">Fan experiences</p>
         <h2 className="mt-3 font-display text-5xl text-ink sm:text-6xl">Get closer to the routine.</h2>
-        <p className="mt-4 max-w-2xl text-muted">Every experience pays the athlete directly through Who Rocks the House. Prices are illustrative.</p>
+        <p className="mt-4 max-w-2xl text-muted">
+          Every experience pays the athlete directly through Who Rocks the House. Anyone can buy one, and monthly supporters unlock
+          them over time. Prices are illustrative.
+        </p>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {fanExperiences.map((x) => (
             <article key={x.id} className="card flex flex-col p-6">
-              <p className="font-display text-4xl text-ink">{x.price}</p>
+              <span className="self-start rounded-full bg-gold-soft px-2.5 py-1 text-[11px] font-semibold text-gold">
+                Monthly supporters · {unlockLabel(x.unlockMonth).toLowerCase()}
+              </span>
+              <p className="mt-4 font-display text-4xl text-ink">{x.price}</p>
               <h3 className="mt-3 text-lg font-semibold text-ink">{x.name}</h3>
               <p className="mt-2 flex-1 text-sm text-muted">{x.body}</p>
               <Link href="/support/avery" className="btn btn-line mt-6 text-sm">Request (demo)</Link>
@@ -51,9 +57,24 @@ export function SupporterOffers() {
           <p className="text-sm font-semibold text-red-lit">Community fund</p>
           <h2 className="mt-3 font-display text-5xl text-ink sm:text-6xl">Fund something small. <em>See it happen.</em></h2>
           <p className="mt-4 max-w-2xl text-muted">
-            Athlete-led activities under $2,500 that fans, families, alumni and local companies can fund together. Bigger
-            campaigns are business Impact Routines.
+            Small community activities, each led by a Red Rock and each under $2,500, that fans, families, alumni and local
+            companies fund together. No sponsorship needed: chip in any amount. Bigger campaigns are business Impact Routines.
           </p>
+          <ol className="mt-8 grid gap-3 sm:grid-cols-3">
+            {[
+              ["1", "Pick an activity", "A clinic, school visit or community day an athlete wants to run."],
+              ["2", "Chip in any amount", "Fans and local companies fill the goal together."],
+              ["3", "See it happen", "The athlete leads it and you get a photo recap of the day."],
+            ].map(([n, title, body]) => (
+              <li key={n} className="flex gap-3 rounded-2xl border border-line bg-paper p-4">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-red font-display text-lg text-white">{n}</span>
+                <span>
+                  <b className="block text-ink">{title}</b>
+                  <span className="text-sm text-muted">{body}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
           <div className="mt-10 grid gap-4 md:grid-cols-2">
             {communityActivities.map((c) => {
               const athlete = athleteBySlug(c.athleteSlug)!;

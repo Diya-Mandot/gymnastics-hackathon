@@ -6,8 +6,8 @@ import { authClient, authConfigured, loadAuthProfile, type AppRole } from "@/lib
 import { Wordmark } from "./Wordmark";
 
 const links: Record<AppRole, Array<[string, string]>> = {
-  fan: [["/fan", "Fan HQ"], ["/live", "Play"], ["/live/cards", "Cards"], ["/live/rewards", "Rewards"], ["/live/meet", "Meet"], ["/support", "Support"]],
-  business: [["/business", "Business Home"], ["/match", "Get Matched"], ["/athletes", "Athletes"], ["/routines", "Campaigns"]],
+  fan: [["/fan", "Fan HQ"], ["/live", "Play"], ["/live/cards", "Cards"], ["/live/rewards", "Rewards"], ["/live/meet", "Meet"], ["/support", "Support"], ["/sponsorship", "Tiers"]],
+  business: [["/business", "Business Home"], ["/match", "Get Matched"], ["/athletes", "Athletes"], ["/routines", "Campaigns"], ["/sponsorship", "Tiers"]],
   athlete: [["/portal/avery", "My Studio"], ["/athletes", "Roster"]],
   staff: [["/team/live", "Live Control"], ["/team/live/analytics", "Analytics"], ["/admin", "Revenue"]],
 };

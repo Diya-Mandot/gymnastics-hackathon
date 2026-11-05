@@ -26,6 +26,7 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
   const [name, setName] = useState("");
   const [phase, setPhase] = useState<Phase>("choose");
   const [supporterNo, setSupporterNo] = useState(0);
+  const [limitError, setLimitError] = useState(false);
 
   const isCustom = custom !== "";
   const finalAmount = isCustom ? Math.max(1, Math.round(Number(custom) || 0)) : amount;
@@ -33,6 +34,8 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
 
   async function onGive() {
     if (phase === "sending" || finalAmount < 1) return;
+    if (finalAmount > 600) { setLimitError(true); return; }
+    setLimitError(false);
     setPhase("sending");
     try {
       const e = await give({
@@ -115,11 +118,12 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
                     pattern="[0-9]*"
                     placeholder="Other"
                     value={custom}
-                    onChange={(e) => setCustom(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
+                    onChange={(e) => { setLimitError(false); setCustom(e.target.value.replace(/[^0-9]/g, "").slice(0, 5)); }}
                     className="w-full bg-transparent px-1 font-display text-xl outline-none placeholder:font-sans placeholder:text-base placeholder:text-faint"
                   />
                 </label>
               </div>
+              {limitError && <p role="alert" className="mt-3 text-sm text-red-lit">Online supporter transactions are limited to $600. <a className="underline" href="mailto:prachiaswani2005@gmail.com?subject=WRTH%20support%20conversation">Contact WRTH Admin</a> for larger support.</p>}
 
               <label className="mt-5 block">
                 <span className="text-sm text-muted">Your name on the supporter wall (optional)</span>

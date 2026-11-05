@@ -8,6 +8,7 @@ import { athletes, seedCampaign } from "@/lib/seed";
 import { useArena } from "@/lib/arena";
 import { authClient, authConfigured } from "@/lib/auth";
 import { SocialShare } from "@/components/live/SocialShare";
+import { ApparatusIcon, CardFan, Confetti, NoiseMeter, PrizeLadder, ROTATIONS, RotationTracker } from "@/components/live/PlayVisuals";
 import { demoBaseline, type ArenaEventType, type SpotlightType } from "@/lib/arena-model";
 
 const routineQuestions = [
@@ -62,6 +63,8 @@ export default function Live() {
   const [guessFeedback, setGuessFeedback] = useState<string | null>(null);
   const [signedIn, setSignedIn] = useState(false);
   const [rewardPrompt, setRewardPrompt] = useState<string | null>(null);
+  const [burst, setBurst] = useState<{ where: "quiz" | "crowd"; n: number } | null>(null);
+  const celebrate = (where: "quiz" | "crowd") => setBurst((b) => ({ where, n: (b?.n ?? 0) + 1 }));
   const question = routineQuestions.find((item) => item.rotation === state.rotation) ?? routineQuestions[0];
   const attempt = state.personalAttempts[question.id];
   const started = (state.startedChallenges[state.fanId] ?? []).includes(question.id);
@@ -73,6 +76,7 @@ export default function Live() {
     { id: "floor", title: "Floor: join the collective fan challenge.", source: "Complete the floor question." },
   ][state.rotation - 1] ?? { id: "vault", title: "Complete a rotation mission.", source: "Choose an eligible challenge." };
   const missionDone = state.missions.includes(mission.id);
+  const rotationArt = ROTATIONS[(state.rotation - 1 + ROTATIONS.length) % ROTATIONS.length];
   const crowdAttempt = state.personalAttempts["crowd-cheer"];
 
   useEffect(() => {
@@ -87,7 +91,8 @@ export default function Live() {
   const submitRoutineAnswer = (answer: string) => {
     arena.startChallenge(question.id, question.sponsored);
     const result = arena.answer(question.id, answer, question.correct, question.card, question.sponsored);
-    if (result?.correct && !signedIn) setRewardPrompt(`${question.card} card`);
+    if (result?.correct) celebrate("quiz");
+    if (result?.correct && !signedIn) setRewardPrompt(`${athletes.find((a) => a.slug === question.card)?.name ?? question.card} card`);
   };
 
   function chooseAthlete(name: string) {
@@ -115,6 +120,13 @@ export default function Live() {
             <p className="mt-3 max-w-lg text-[15px] text-white/80">Free games during the meet. Answer, cheer and collect cards for points and prizes.</p>
             <p className="mt-2 text-xs text-white/55">Demo simulation · no live scoring connection · free gameplay</p>
           </div>
+          <Image
+            src="/images/fan-emoji.jpg"
+            alt=""
+            width={120}
+            height={120}
+            className="pointer-events-none absolute right-8 top-6 hidden h-24 w-24 animate-float rounded-[28px] border-4 border-white object-cover shadow-2xl md:block lg:right-10 lg:top-8 lg:h-28 lg:w-28"
+          />
           <dl className="grid grid-cols-3 gap-2">
             <Metric value={state.points} label="Points" tone="gold" />
             <Metric value={state.completed.length} label="Challenges" tone="sky" />
@@ -123,9 +135,20 @@ export default function Live() {
         </div>
       </header>
 
-      <div className="mx-auto mt-2 grid max-w-7xl gap-5 px-4 sm:px-8 lg:grid-cols-[1.7fr_0.8fr]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8">
+        <RotationTracker rotation={state.rotation} missions={state.missions} />
+      </div>
+
+      <div className="mx-auto mt-5 grid max-w-7xl gap-5 px-4 sm:px-8 lg:grid-cols-[1.7fr_0.8fr]">
         <section className="space-y-5">
-          <section className="card relative overflow-hidden !border-red/40 bg-[linear-gradient(135deg,rgb(204_0_0/0.16),transparent_55%)] p-6" aria-labelledby="routine-title">
+          <section className="card relative grid overflow-hidden !border-red/40 bg-[linear-gradient(135deg,rgb(204_0_0/0.16),transparent_55%)] !p-0 md:grid-cols-[1fr_220px]" aria-labelledby="routine-title">
+            {burst?.where === "quiz" && <Confetti key={burst.n} />}
+            <div className="relative h-40 md:order-2 md:h-auto">
+              <Image src={rotationArt.photo} alt={`A Red Rocks gymnast on ${rotationArt.label.toLowerCase()}`} fill sizes="(max-width: 768px) 100vw, 220px" className="object-cover" style={{ objectPosition: rotationArt.focus }} />
+              <div className="absolute inset-0 bg-[linear-gradient(0deg,rgb(15_14_13/0.7),transparent_60%)] md:bg-[linear-gradient(90deg,rgb(15_14_13/0.55),transparent_50%)]" />
+              <span className="absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white backdrop-blur">{rotationArt.label} · Rotation {state.rotation}</span>
+            </div>
+            <div className="p-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="label !text-red-lit">Current challenge · Routine IQ</p>
               <span className="tag">{question.sponsored ? "Sponsored by BrightPath · demo" : "+100 points for a correct answer"}</span>
@@ -139,18 +162,22 @@ export default function Live() {
             ) : (
               <>
                 <div className="mt-5 grid gap-3">
-                  {question.options.map((option) => (
+                  {question.options.map((option, oi) => (
                     <button
                       disabled={Boolean(attempt)}
                       key={option}
                       onClick={() => submitRoutineAnswer(option)}
-                      className={`rounded-xl border px-5 py-4 text-left transition-colors ${
+                      className={`group flex items-center gap-4 rounded-xl border px-4 py-3.5 text-left transition-all ${
                         attempt?.submittedAnswer === option
                           ? attempt.correct ? "border-green bg-green/10" : "border-red bg-red-soft"
-                          : "border-line bg-surface hover:border-red"
+                          : "border-line bg-surface hover:-translate-y-0.5 hover:border-red"
                       }`}
                     >
-                      {option}
+                      <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full font-display text-lg ${["bg-red text-white", "bg-sky text-white", "bg-gold text-black", "bg-green text-black"][oi % 4]}`} aria-hidden="true">
+                        {"ABCD"[oi]}
+                      </span>
+                      <span className="text-[15px] text-ink">{option}</span>
+                      {attempt?.submittedAnswer === option && <span className="ml-auto text-lg" aria-hidden="true">{attempt.correct ? "🎉" : "✕"}</span>}
                     </button>
                   ))}
                 </div>
@@ -163,6 +190,7 @@ export default function Live() {
                 )}
               </>
             )}
+            </div>
           </section>
 
           {athleteGuess && (
@@ -187,7 +215,10 @@ export default function Live() {
 
           <div className="grid gap-5 md:grid-cols-2">
             <section className="card border-t-4 !border-t-sky p-5">
-              <p className="label !text-sky">Rotation mission · {question.apparatus}</p>
+              <div className="flex items-start justify-between gap-3">
+                <p className="label !text-sky">Rotation mission · {question.apparatus}</p>
+                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-sky-soft text-sky"><ApparatusIcon id={rotationArt.id} className="h-8 w-8" /></span>
+              </div>
               <h2 className="mt-2 font-display text-3xl text-ink">{mission.title}</h2>
               <p className="mt-2 text-sm text-muted">{mission.source} Complete all four meet missions to earn a free Meet Night Champion badge.</p>
               {mission.id === "bars" && <Link onClick={() => arena.track("athlete_story_view", "avery")} href="/athletes/avery" className="mt-4 inline-block text-sm font-semibold text-red-lit">Watch Avery's story →</Link>}
@@ -195,35 +226,37 @@ export default function Live() {
                 <button disabled={missionDone} onClick={() => arena.completeMission(mission.id, state.rotation)} className="btn btn-line mt-4 disabled:opacity-50">{missionDone ? "Mission complete" : "Complete rotation mission"}</button>
               </div>
             </section>
-            <section className="card border-t-4 !border-t-gold p-5">
+            <section className="card relative overflow-hidden border-t-4 !border-t-gold !p-0">
+              {burst?.where === "crowd" && <Confetti key={burst.n} pieces={36} />}
+              <div className="on-photo relative h-32 overflow-hidden">
+                <Image src="/images/fan-signs.jpg" alt="Fans holding Red Rocks signs in the stands" fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover object-[center_35%]" />
+                <div className="absolute inset-0 bg-[linear-gradient(0deg,var(--color-surface),rgb(15_14_13/0.2)_70%)]" />
+                <span className="absolute left-4 top-3 rounded-full bg-gold px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-black">📣 Crowd challenge</span>
+              </div>
+              <div className="p-5 pt-1">
               <p className="label !text-gold">Collective fan challenge</p>
               <h2 className="mt-2 font-display text-3xl text-ink">Raise the roof</h2>
+              <div className="mt-3"><NoiseMeter level={Math.min(1, state.crowd / state.milestoneTarget)} /></div>
               <p className="mt-2 text-sm text-muted">A shared participation target—not a prediction about athlete performance.</p>
               <div className="mt-4 h-3 overflow-hidden rounded-full bg-sand" role="progressbar" aria-label="Eligible fan challenges completed" aria-valuenow={Math.min(state.crowd, state.milestoneTarget)} aria-valuemin={0} aria-valuemax={state.milestoneTarget}>
                 <div className="h-full rounded-full bg-[linear-gradient(90deg,var(--color-red),var(--color-gold))]" style={{ width: `${Math.min(100, state.crowd / state.milestoneTarget * 100)}%` }} />
               </div>
               <p className="mt-2 text-sm text-muted">{state.crowd.toLocaleString()} / {state.milestoneTarget.toLocaleString()} eligible challenges complete</p>
               <p className="mt-2 text-xs text-faint">{state.milestoneCompleted ? "Pre-approved demo thank-you story unlocked." : "Reward: pre-approved athlete thank-you story."} Starting point is simulated demo activity.</p>
-              {!crowdAttempt ? <button onClick={() => { const result = arena.joinCrowdChallenge(); if (result && !result.alreadyAnswered && !signedIn) setRewardPrompt("Crowd Builder participation badge"); }} className="btn btn-line mt-4">Add my free cheer · +25 pts</button> : <p className="mt-4 rounded-xl bg-sand p-3 text-sm text-ink">Your cheer is counted · {crowdAttempt.pointsAwarded} participation points earned.</p>}
+              {!crowdAttempt ? <button onClick={() => { const result = arena.joinCrowdChallenge(); if (result && !result.alreadyAnswered) celebrate("crowd"); if (result && !result.alreadyAnswered && !signedIn) setRewardPrompt("Crowd Builder participation badge"); }} className="btn mt-4 bg-gold font-semibold text-black hover:brightness-110">📣 Add my free cheer · +25 pts</button> : <p className="mt-4 rounded-xl bg-sand p-3 text-sm text-ink">Your cheer is counted · {crowdAttempt.pointsAwarded} participation points earned.</p>}
               {state.milestoneCompleted && <Link href="/live/meet" className="mt-3 inline-block text-sm font-semibold text-red-lit">View the reward →</Link>}
+              </div>
             </section>
           </div>
 
-          <section className="card overflow-hidden p-5">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div><p className="label">Collect the roster</p><h2 className="mt-2 font-display text-3xl text-ink">{state.cards.length} of 5 collectible cards</h2></div>
-              <div className="flex items-center gap-4">
-                <div className="flex -space-x-3" aria-hidden="true">
-                  {athletes.map((a) => (
-                    <span key={a.slug} className={`relative h-12 w-12 overflow-hidden rounded-full border-2 border-paper bg-white ${state.cards.includes(a.slug) ? "" : "opacity-60 grayscale"}`}>
-                      {a.photo && <Image src={a.photo} alt="" fill sizes="48px" className="object-cover object-[50%_20%]" />}
-                    </span>
-                  ))}
-                </div>
-                <Link href="/live/cards" className="btn btn-red">View cards</Link>
-              </div>
+          <section className="card grid items-center gap-4 overflow-hidden bg-[radial-gradient(circle_at_80%_50%,rgb(204_0_0/0.18),transparent_60%)] p-5 sm:grid-cols-[1fr_auto]">
+            <div>
+              <p className="label">Collect the roster</p>
+              <h2 className="mt-2 font-display text-3xl text-ink">{state.cards.length} of 5 collectible cards</h2>
+              <p className="mt-2 text-sm text-muted">Cards are free, earned through participation, and never ranked by follower count.</p>
+              <Link href="/live/cards" className="btn btn-red mt-4">View my cards</Link>
             </div>
-            <p className="mt-2 text-sm text-muted">Cards are free, earned through participation, and never ranked by follower count.</p>
+            <div className="px-6 sm:pr-10"><CardFan athletes={athletes} collected={state.cards} /></div>
           </section>
           <Spotlight
             type={state.spotlight}
@@ -249,6 +282,7 @@ export default function Live() {
             <p className="label !text-gold">Your free rewards</p>
             <p className="mt-2 font-display text-5xl text-gold">{state.points} <span className="text-2xl text-ink">points</span></p>
             <p className="mt-2 text-sm text-muted">{state.completed.length} unique challenges · {state.cards.length} cards</p>
+            <PrizeLadder points={state.points} />
             <Link href="/live/rewards" className="btn btn-line mt-4 w-full">See progress & badges</Link>
           </section>
           <section className="card border-l-4 !border-l-red p-5">

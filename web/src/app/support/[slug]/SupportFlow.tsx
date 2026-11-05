@@ -35,7 +35,7 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
 
   async function onGive() {
     if (phase === "sending" || finalAmount < 1) return;
-    if (finalAmount > 600) { setLimitError(true); return; }
+    if (finalAmount > 500) { setLimitError(true); return; }
     setLimitError(false);
     setPhase("sending");
     try {
@@ -124,7 +124,7 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
                   />
                 </label>
               </div>
-              {limitError && <p role="alert" className="mt-3 text-sm text-red-lit">Online supporter transactions are limited to $600. <a className="underline" href="mailto:prachiaswani2005@gmail.com?subject=WRTH%20support%20conversation">Contact WRTH Admin</a> for larger support.</p>}
+              {limitError && <p role="alert" className="mt-3 text-sm text-red-lit">Online supporter transactions are limited to $500. <a className="underline" href="mailto:prachiaswani2005@gmail.com?subject=WRTH%20support%20conversation">Contact WRTH Admin</a> for larger support.</p>}
 
               <label className="mt-5 block">
                 <span className="text-sm text-muted">Your name on the supporter wall (optional)</span>

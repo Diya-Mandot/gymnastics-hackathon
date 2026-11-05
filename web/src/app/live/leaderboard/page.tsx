@@ -2,8 +2,13 @@
 
 import Link from "next/link";
 import { useArena } from "@/lib/arena";
+import { RoleGate } from "@/components/live/RoleGate";
 
 export default function Leaderboard() {
+  return <RoleGate roles={["fan"]}><LeaderboardPage /></RoleGate>;
+}
+
+function LeaderboardPage() {
   const { state } = useArena();
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-8">

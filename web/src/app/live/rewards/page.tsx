@@ -2,8 +2,13 @@
 
 import Link from "next/link";
 import { useArena } from "@/lib/arena";
+import { RoleGate } from "@/components/live/RoleGate";
 
 export default function Rewards() {
+  return <RoleGate roles={["fan"]}><RewardsPage /></RoleGate>;
+}
+
+function RewardsPage() {
   const { state, setLeaderboardOptIn } = useArena();
   const nextBadge = Math.max(0, 300 - state.points);
   const badges = [

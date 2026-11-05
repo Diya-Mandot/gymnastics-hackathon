@@ -4,8 +4,13 @@ import Link from "next/link";
 import { useArena } from "@/lib/arena";
 import { athletes } from "@/lib/seed";
 import { AthletePortrait } from "@/components/AthletePortrait";
+import { RoleGate } from "@/components/live/RoleGate";
 
 export default function Cards() {
+  return <RoleGate roles={["fan"]}><CardsCollection /></RoleGate>;
+}
+
+function CardsCollection() {
   const { state } = useArena();
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-8">

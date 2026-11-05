@@ -10,7 +10,7 @@ export function BackButton() {
     else router.push("/live");
   }
 
-  return <button onClick={goBack} className="fixed bottom-20 left-4 z-50 inline-flex items-center gap-2 rounded-full border border-line bg-surface/95 px-4 py-2.5 text-sm font-semibold text-ink shadow-lg backdrop-blur hover:border-red focus:outline-none focus:ring-2 focus:ring-red-lit sm:bottom-5 sm:left-5" aria-label="Go back to the previous page">
+  return <button onClick={goBack} className="fixed left-4 top-20 z-[200] inline-flex items-center gap-2 rounded-full bg-red px-4 py-2.5 text-sm font-semibold text-white shadow-xl hover:bg-red-lit focus:outline-none focus:ring-2 focus:ring-red-lit focus:ring-offset-2 focus:ring-offset-paper sm:left-5" aria-label="Go back to the previous page">
     <span aria-hidden="true">←</span> Back
   </button>;
 }

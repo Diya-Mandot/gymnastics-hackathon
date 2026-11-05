@@ -56,6 +56,7 @@ export default function Home() {
               <Link href="/match" className="btn btn-red">Get matched</Link>
               <Link href="/athletes" className="btn btn-line">Meet the athletes</Link>
               <Link href="/support#cards" className="btn btn-line">Collect cards</Link>
+              <Link href="/live/qr" className="btn btn-line">📱 Play at the meet</Link>
             </div>
           </div>
           <div className="w-full max-w-sm animate-rise [animation-delay:240ms]">

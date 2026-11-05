@@ -65,7 +65,11 @@ export default function Live() {
             </span>
             <h1 className="mt-4 font-display text-[clamp(44px,6vw,84px)] leading-[0.95] text-white">Every rotation. <em className="text-red-lit">Every fan.</em></h1>
             <p className="mt-3 max-w-lg text-[15px] text-white/80">Free games during the meet. Answer, cheer and collect cards for points and prizes.</p>
-            <p className="mt-2 text-xs text-white/55">Demo simulation · no live scoring connection · free gameplay</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link href="/live/iq" className="btn btn-red">Play Routine IQ →</Link>
+              <Link href="/live/qr" className="btn border border-white/30 bg-black/40 text-white backdrop-blur hover:bg-black/60">📱 Show the arena QR code</Link>
+            </div>
+            <p className="mt-3 text-xs text-white/55">Demo simulation · no live scoring connection · free gameplay</p>
           </div>
           <Image
             src="/images/fan-emoji.jpg"

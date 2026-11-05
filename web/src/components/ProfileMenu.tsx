@@ -20,21 +20,34 @@ export function ProfileMenu() {
 
   useEffect(() => {
     if (!authConfigured) return;
-    const client = authClient();
     let mounted = true;
+    let unsubscribe: (() => void) | undefined;
     async function refresh() {
-      const { data } = await client.auth.getUser();
-      if (!mounted) return;
-      setProfile(data.user ? await loadAuthProfile(data.user) : null);
-      setReady(true);
+      try {
+        const client = authClient();
+        const { data } = await client.auth.getUser();
+        if (!mounted) return;
+        setProfile(data.user ? await loadAuthProfile(data.user) : null);
+      } catch {
+        // The public experience must keep working even when a local/demo
+        // environment does not have usable Supabase credentials.
+        if (mounted) setProfile(null);
+      } finally {
+        if (mounted) setReady(true);
+      }
     }
     refresh();
-    const { data: listener } = client.auth.onAuthStateChange(() => { refresh(); });
-    return () => { mounted = false; listener.subscription.unsubscribe(); };
+    try {
+      const { data: listener } = authClient().auth.onAuthStateChange(() => { refresh(); });
+      unsubscribe = () => listener.subscription.unsubscribe();
+    } catch {
+      setReady(true);
+    }
+    return () => { mounted = false; unsubscribe?.(); };
   }, []);
 
   async function signOut() {
-    if (authConfigured) await authClient().auth.signOut();
+    try { if (authConfigured) await authClient().auth.signOut(); } catch {}
     setProfile(null);
     setOpen(false);
     router.push("/join");

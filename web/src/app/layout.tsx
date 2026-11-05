@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
 import { BackButton } from "@/components/BackButton";
+import { ProfileMenu } from "@/components/ProfileMenu";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
         <NavBar />
+        <ProfileMenu />
         <main id="main">{children}</main>
         <BackButton />
         <Footer />

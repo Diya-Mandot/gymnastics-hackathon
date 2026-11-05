@@ -1,12 +1,21 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { authClient, authConfigured, loadAuthProfile, type AppRole } from "@/lib/auth";
 
 const roles: Exclude<AppRole, "staff">[] = ["fan", "business", "athlete"];
 
+// useSearchParams (for ?ref= referral codes) needs a Suspense boundary so the page can prerender.
 export default function Join() {
+  return (
+    <Suspense fallback={<main className="mx-auto max-w-4xl px-5 py-14 text-muted">Loading…</main>}>
+      <JoinForm />
+    </Suspense>
+  );
+}
+
+function JoinForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [login, setLogin] = useState(false);

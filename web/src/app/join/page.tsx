@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { authClient, authConfigured, loadAuthProfile, type AppRole } from "@/lib/auth";
 
@@ -8,18 +8,28 @@ const roles: Exclude<AppRole, "staff">[] = ["fan", "business", "athlete"];
 
 export default function Join() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [login, setLogin] = useState(false);
   const [role, setRole] = useState<Exclude<AppRole, "staff">>("fan");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const referralCode = searchParams.get("ref");
+  async function recordReferral(userId: string) {
+    const referrer = referralCode ?? localStorage.getItem("rtr:pending-referrer");
+    if (!referrer || referrer === userId) return;
+    localStorage.setItem("rtr:pending-referrer", referrer);
+    await authClient().from("fan_referrals").insert({ referrer_id: referrer, referee_id: userId, status: "signed_up", points: 100 });
+    localStorage.removeItem("rtr:pending-referrer");
+  }
   async function go() {
     if (!authConfigured) return setMessage("Add the Supabase URL and publishable key to .env.local first.");
     const supabase = authClient();
     if (login) {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error || !data.user) return setMessage(error?.message ?? "Unable to log in.");
+      await recordReferral(data.user.id);
       const profile = await loadAuthProfile(data.user);
       router.push(profile?.role === "staff" ? "/team/live" : profile?.role === "business" ? "/business" : profile?.role === "athlete" ? "/portal/avery" : "/fan");
       return;
@@ -27,6 +37,7 @@ export default function Join() {
     const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { first_name: name, role } } });
     if (error) return setMessage(error.message);
     if (!data.session) return setMessage("Check your inbox to confirm your account, then log in.");
+    await recordReferral(data.user?.id ?? "");
     if (role === "fan") localStorage.setItem("rtr:new-fan-offer", "1");
     router.push(role === "business" ? "/business" : role === "athlete" ? "/portal/avery" : "/fan");
   }

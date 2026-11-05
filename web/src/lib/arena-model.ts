@@ -93,6 +93,7 @@ export type ArenaMetrics = {
 export type ArenaView = ArenaData & {
   fanId: string;
   points: number;
+  supportTotal: number;
   completed: string[];
   cards: string[];
   crowd: number;
@@ -425,6 +426,9 @@ export function toArenaView(data: ArenaData, fanId: string): ArenaView {
     Object.values(personalAttempts).reduce((total, attempt) => total + attempt.pointsAwarded, 0) +
     fanEvents.filter((event) => event.type === "participation_bonus").reduce((total, event) => total + (event.amount ?? 0), 0);
   const cards = [...new Set(fanEvents.filter((event) => event.type === "card_unlocked").map((event) => event.entityId))];
+  const supportTotal = fanEvents
+    .filter((event) => event.type === "fan_contribution")
+    .reduce((total, event) => total + (event.amount ?? 0), 0);
   const leaderboardPoints = new Map<string, { points: number; completed: number }>();
   for (const event of data.events) {
     if (!event.fanId || !data.leaderboardOptIns.includes(event.fanId)) continue;
@@ -445,6 +449,7 @@ export function toArenaView(data: ArenaData, fanId: string): ArenaView {
     ...data,
     fanId,
     points,
+    supportTotal,
     completed: Object.keys(personalAttempts),
     cards,
     crowd: getCrowdProgress(data),

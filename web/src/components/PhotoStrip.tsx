@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-// Team, crowd and venue shots. The four profile photos are kept out so no face appears under two captions.
+// Team, crowd and venue shots. Athlete headshots are kept out so no face appears under two captions.
 const photos = [
   { src: "/images/arena-crowd.jpg", alt: "The Huntsman Center crowd in red", caption: "Huntsman Center", w: 1.33 },
   { src: "/images/gymnast-leap.jpg", alt: "A Red Rocks gymnast in a split leap above a packed arena", caption: "Split leap", w: 1.5 },

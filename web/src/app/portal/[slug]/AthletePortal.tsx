@@ -1,13 +1,15 @@
 "use client";
 
+import { splitDeal } from "@/lib/nilModel";
 import Link from "next/link";
 import { AthletePortrait } from "@/components/AthletePortrait";
 import { FeatureBadge } from "@/components/Badges";
 import { ROLE_LABELS, useRole, type Role } from "@/hooks/useRole";
+import { useAudience } from "@/components/AudienceProvider";
 import { isSigned, useDeals, type Deal } from "@/lib/deals";
 import { compact, usd } from "@/lib/labels";
 import { athletes } from "@/lib/seed";
-import { rankCategories } from "@/lib/sponsors";
+import { excludedCategories, rankCategories } from "@/lib/sponsors";
 import type { Athlete } from "@/lib/types";
 import { BrandStudio, useKitStatus, type KitStatus } from "./BrandStudio";
 import { DealsBoard } from "./DealsBoard";
@@ -25,14 +27,18 @@ const TAB_LABELS: Record<PortalTab, string> = {
 };
 
 export function AthletePortal({ athlete, tab }: { athlete: Athlete; tab: PortalTab }) {
-  const { role, setRole } = useRole();
+  const { role: pickedRole, setRole } = useRole();
+  const { audience } = useAudience();
+  // A signed-in athlete always acts as herself; the WRTH team can switch roles and athletes.
+  const isAthlete = audience?.group === "athlete";
+  const role: Role = isAthlete ? "athlete" : pickedRole;
   const { deals, update, add } = useDeals();
   const kitStatus = useKitStatus(athlete.slug);
 
   return (
     <>
       {/* Portal hero: the athlete's own photo, faded into the page */}
-      <section className="relative flex min-h-[44svh] items-end overflow-hidden">
+      <section className="on-photo relative flex min-h-[44svh] items-end overflow-hidden bg-paper">
         <AthletePortrait athlete={athlete} className="absolute inset-0" priority credit={false} />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(15_14_13/0.55)_0%,rgb(15_14_13/0.25)_35%,rgb(15_14_13/0.7)_75%,#0f0e0d_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(15_14_13/0.8)_0%,rgb(15_14_13/0.2)_60%,transparent_85%)]" />
@@ -42,8 +48,9 @@ export function AthletePortal({ athlete, tab }: { athlete: Athlete; tab: PortalT
             <h1 className="mt-3 animate-rise font-display text-[clamp(52px,7vw,104px)] text-ink [animation-delay:60ms]">
               {athlete.firstName}’s <em>portal.</em>
             </h1>
-            <p className="mt-3 text-sm text-ink/60">Simulated roles · no real login · real Red Rocks photo; name, story &amp; stats are demo content</p>
+            <p className="mt-3 text-sm text-ink/60">Demo sign-in · real Red Rocks photo; name, story &amp; stats are demo content</p>
           </div>
+          {!isAthlete && (
           <div className="flex flex-wrap items-center gap-3">
             <label className="flex items-center gap-2 text-sm text-ink/70">
               Athlete
@@ -59,6 +66,7 @@ export function AthletePortal({ athlete, tab }: { athlete: Athlete; tab: PortalT
             </label>
             <RoleSwitch role={role} setRole={setRole} />
           </div>
+          )}
         </header>
       </section>
 
@@ -183,7 +191,10 @@ function Dashboard({ athlete, role, deals, kitStatus }: { athlete: Athlete; role
                   <span className="block text-ink">{d.sponsor}</span>
                   <span className="text-xs text-faint">{d.packageName} · {d.stage}</span>
                 </span>
-                <span className="font-display text-xl text-ink">{usd(d.amount)}</span>
+                <span className="text-right">
+                  <span className="block font-display text-xl text-ink">{usd(d.amount)}</span>
+                  <span className="text-xs text-faint">{usd(splitDeal(d.amount).athlete)} to {athlete.firstName}</span>
+                </span>
               </li>
             ))}
             {!mine.length && <li className="py-3 text-sm text-muted">No opportunities yet.</li>}
@@ -262,7 +273,8 @@ function SponsorFit({ athlete, deals, add }: { athlete: Athlete; deals: Deal[]; 
           Which businesses should want <em>{athlete.firstName}?</em>
         </h2>
         <p className="mt-3 text-muted">
-          Ranked from her approved causes, audiences, formats and minimum budget: cause 40%, audience 35%, format 15%, budget 10%.
+          First, sponsors below her minimum budget, without a format she offers, or in a category she has opted out of are screened
+          out. The rest are ranked: cause 40%, audience 35%, format 15%, budget 10%.
           Businesses below are fictional examples. Adding one creates a qualified opportunity in the shared pipeline; nothing is sent.
         </p>
       </div>
@@ -300,7 +312,7 @@ function SponsorFit({ athlete, deals, add }: { athlete: Athlete; deals: Deal[]; 
                         id,
                         sponsor: b.name,
                         athleteSlug: athlete.slug,
-                        packageName: b.budget >= 50000 ? "Red Rocks Partner" : b.budget >= 15000 ? "Impact Routine" : "Community Spark",
+                        packageName: b.budget >= 30000 ? "Red Rocks Partner" : b.budget >= 15000 ? "Impact Routine" : "Community Spark",
                         amount: b.budget,
                         stage: "Qualified",
                         collected: 0,
@@ -321,6 +333,17 @@ function SponsorFit({ athlete, deals, add }: { athlete: Athlete; deals: Deal[]; 
           </li>
         ))}
       </ol>
+      {excludedCategories(athlete).length > 0 && (
+        <section className="mt-8 rounded-[16px] border border-dashed border-line p-5" aria-label="Screened out">
+          <p className="text-sm font-semibold text-ink">Screened out before ranking</p>
+          <p className="mt-1 text-xs text-muted">These sponsors fail a hard rule (budget, format, availability or {athlete.firstName}’s preferences), so they get no score.</p>
+          <ul className="mt-3 space-y-1 text-sm text-muted">
+            {excludedCategories(athlete).map((x) => (
+              <li key={x.category.id}><b className="font-medium text-ink">{x.category.name}</b>: {x.blockers.join("; ")}</li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

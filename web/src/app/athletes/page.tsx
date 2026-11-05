@@ -3,13 +3,14 @@ import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { compact } from "@/lib/labels";
 import { athletes } from "@/lib/seed";
+import { roster } from "@/lib/roster";
+import { RosterGrid } from "@/components/RosterGrid";
 import { Explore } from "./Explore";
 
 export const metadata = { title: "Explore Athletes" };
 
 export default function AthletesPage() {
   const reach = athletes.reduce((s, a) => s + a.reach, 0);
-  const engagement = athletes.reduce((s, a) => s + a.engagementRate, 0) / athletes.length;
   return (
     <>
       <PageHero
@@ -26,22 +27,24 @@ export default function AthletesPage() {
         }
         aside={
           <dl className="card grid grid-cols-3 divide-x divide-line p-5 lg:w-[380px]">
-            <HeroStat label="Athletes" value={String(athletes.length)} />
-            <HeroStat label="Combined reach" value={compact(reach)} />
-            <HeroStat label="Avg engagement" value={`${engagement.toFixed(1)}%`} />
+            <HeroStat label="On the roster" value={String(roster.length)} />
+            <HeroStat label="Live campaigns" value={String(athletes.length)} />
+            <HeroStat label="Sample reach" value={compact(reach)} />
           </dl>
         }
       >
-        Every athlete gets the same spotlight. Fan Favorites bring reach; Rising Routines bring stories and the roster’s highest
-        engagement.
+        Meet the 2027 Red Rocks. {athletes.length} athletes have a campaign you can back or sponsor today, and every gymnast on
+        the team has a trading card.
       </PageHero>
 
       <div id="roster" className="mx-auto max-w-7xl scroll-mt-16 px-4 pb-20 sm:px-8">
         <Explore athletes={athletes} />
       </div>
 
+      <RosterGrid />
+
       {/* Closing band */}
-      <section className="relative flex min-h-[46svh] items-center overflow-hidden">
+      <section className="on-photo relative flex min-h-[46svh] items-center overflow-hidden">
         <Image src="/images/team-celebrate.jpg" alt="Red Rocks gymnasts laughing and celebrating together" fill sizes="100vw" className="object-cover object-[center_35%]" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(15_14_13/0.85)_0%,rgb(15_14_13/0.4)_60%,rgb(15_14_13/0.2)_100%)]" />
         <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-8">

@@ -98,7 +98,7 @@ export function FindYourRoutine() {
               <Link href={`/athletes/${athlete.slug}`} className="btn btn-line">See her profile</Link>
               <button onClick={() => setAnswers({})} className="px-3 text-sm text-muted hover:text-ink">Start over</button>
             </div>
-            <p className="mt-4 text-xs text-faint">Demo profile with a real Red Rocks photo. Name, story and stats are demo content.</p>
+            <p className="mt-4 text-xs text-faint">Real Red Rocks athlete. Quote, story and campaign numbers are sample content.</p>
           </div>
         </div>
       )}

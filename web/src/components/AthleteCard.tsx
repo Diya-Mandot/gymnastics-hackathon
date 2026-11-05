@@ -2,7 +2,7 @@ import Link from "next/link";
 import { availabilityLabel, causeLabels, compact, usd } from "@/lib/labels";
 import type { Athlete } from "@/lib/types";
 import { AthletePortrait } from "./AthletePortrait";
-import { FeatureBadge } from "./Badges";
+import { DataTag, FeatureBadge } from "./Badges";
 
 export function AthleteCard({ athlete, showActions = true }: { athlete: Athlete; showActions?: boolean }) {
   return (
@@ -17,7 +17,7 @@ export function AthleteCard({ athlete, showActions = true }: { athlete: Athlete;
       <div className="flex flex-1 flex-col px-2 pb-2 pt-4">
         <div className="flex items-baseline justify-between gap-3">
           <h3 className="font-display text-3xl text-ink">{athlete.name}</h3>
-          <span className="text-xs text-faint">Demo</span>
+          <DataTag kind="estimate">Sample campaign</DataTag>
         </div>
         <p className="mt-0.5 text-sm text-muted">{athlete.specialty} · {athlete.classYear}</p>
         <p className="mt-3 text-[15px] leading-snug text-ink/85">{athlete.tagline}</p>

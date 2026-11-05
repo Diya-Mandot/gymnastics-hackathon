@@ -1,5 +1,6 @@
 "use client";
 
+import { AssetStudio } from "@/components/AssetStudio";
 import { useEffect, useState } from "react";
 import { AiSections, SourceTag, Sparkle } from "@/components/AiSections";
 import { useTextStream } from "@/hooks/useTextStream";
@@ -181,6 +182,7 @@ export function BrandStudio({ athlete, role }: { athlete: Athlete; role: Role })
           </>
         )}
       </section>
+      <AssetStudio athlete={athlete} canApprove={role === "athlete"} />
     </div>
   );
 }

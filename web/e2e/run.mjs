@@ -2,7 +2,7 @@
 import { BASE, launch } from "./lib.mjs";
 import * as suites from "./suites.mjs";
 
-const order = ["setup", "fanToAdmin", "matching", "ai", "teamWorkspace", "pages", "teardown"];
+const order = ["setup", "fanToAdmin", "matching", "ai", "teamWorkspace", "audiences", "pages", "teardown"];
 const only = process.argv.slice(2);
 const selected = only.length ? order.filter((n) => n === "setup" || n === "teardown" || only.includes(n)) : order;
 

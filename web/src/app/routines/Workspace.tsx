@@ -53,7 +53,7 @@ export function Workspace() {
             <CampaignProgress campaign={campaign} />
             <dl className="divide-y divide-line border-y border-line text-sm">
               {[
-                ["Athlete", "Avery Davis"],
+                ["Athlete", "Avery Neff"],
                 ["Sponsor", `${campaign.sponsorName} (fictional)`],
                 ["Community partner", campaign.partner],
                 ["Package", "Impact Routine · $15,000"],
@@ -121,7 +121,7 @@ export function Workspace() {
               ))}
             </dl>
             <p className="mt-5 border-l-2 border-green pl-4 text-ink">
-              Renewal recommendation: strong. Family offer claims beat the target by 41%. Suggest a spring Impact Routine with Avery and Mia.
+              Renewal recommendation: strong. Family offer claims beat the target by 41%. Suggest a spring Impact Routine with Avery and Camie.
             </p>
             <p className="mt-3 text-xs text-faint">Illustrative sample results for the demo.</p>
           </div>

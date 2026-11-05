@@ -62,7 +62,7 @@ export function SupportFlow({ athlete }: { athlete: Athlete }) {
               <div>
                 <p className="text-sm font-semibold text-red-lit">Scan to back a gymnast</p>
                 <h1 className="mt-1 font-display text-[39px] text-ink">Back {athlete.firstName}</h1>
-                <p className="text-xs text-faint">Demo profile · real Red Rocks photo</p>
+                <p className="text-xs text-faint">Real athlete · sample campaign</p>
               </div>
             </section>
             <p className="mt-5 text-[17px] leading-relaxed text-ink/85">“{athlete.quote}”</p>

@@ -14,7 +14,7 @@ export function PageHero({ image, alt, eyebrow, title, children, actions, aside,
 }) {
   const height = size === "lg" ? "min-h-[78svh]" : size === "md" ? "min-h-[58svh]" : "min-h-[40svh]";
   return (
-    <section className={`relative flex ${height} items-end overflow-hidden`}>
+    <section className={`on-photo relative flex ${height} items-end overflow-hidden bg-paper`}>
       <Image src={image} alt={alt} fill priority sizes="100vw" className="object-cover" style={{ objectPosition: focus }} />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(15_14_13/0.6)_0%,rgb(15_14_13/0.15)_32%,rgb(15_14_13/0.55)_68%,#0f0e0d_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(15_14_13/0.88)_0%,rgb(15_14_13/0.45)_50%,transparent_82%)]" />

@@ -9,7 +9,7 @@ export function FeatureBadge({ type }: { type: FeatureType }) {
   );
 }
 
-export function DemoBadge({ label = "Demo profile" }: { label?: string }) {
+export function DemoBadge({ label = "Sample campaign" }: { label?: string }) {
   return <span className="tag !bg-surface/90 !font-medium !text-muted">{label}</span>;
 }
 
@@ -21,5 +21,32 @@ export function NoPaymentNotice({ className = "" }: { className?: string }) {
       </svg>
       Demo contribution · no payment will be processed
     </p>
+  );
+}
+
+/**
+ * What kind of data you're looking at. Text + shape, never colour alone.
+ * fictional: made-up people or businesses · simulated: demo actions (no real payment, email or signature)
+ * estimate: modelled numbers, not results · live: real records written by this app (demo gifts, deal changes)
+ */
+const dataKinds = {
+  fictional: { label: "Fictional", mark: "◇" },
+  simulated: { label: "Simulated", mark: "○" },
+  estimate: { label: "Estimate", mark: "≈" },
+  live: { label: "Live record", mark: "●" },
+} as const;
+
+export type DataKind = keyof typeof dataKinds;
+
+export function DataTag({ kind, children }: { kind: DataKind; children?: React.ReactNode }) {
+  const k = dataKinds[kind];
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${kind === "live" ? "border-green/50 text-green" : "border-line text-muted"}`}
+      title={`${k.label} data`}
+    >
+      <span aria-hidden="true">{k.mark}</span>
+      {children ?? k.label}
+    </span>
   );
 }

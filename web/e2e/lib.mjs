@@ -14,6 +14,14 @@ export function check(condition, message) {
   console.log(`    ✓ ${message}`);
 }
 
+/** A browser context already signed in through the demo sign-in (same key the app uses). */
+export async function signedIn(browser, options, audience) {
+  const ctx = await browser.newContext(options);
+  await ctx.addInitScript(([k, v]) => { try { localStorage.setItem(k, v); } catch {} }, ["rtr:audience:v1", JSON.stringify(audience)]);
+  return ctx;
+}
+export const TEAM = { group: "team", name: "Demo presenter" };
+
 /** Collects uncaught page errors so a suite can assert there were none. */
 export function watch(page, errors, label = "") {
   page.on("pageerror", (e) => errors.push(`${label}${page.url()}: ${e.message}`));

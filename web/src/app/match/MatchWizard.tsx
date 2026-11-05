@@ -51,7 +51,7 @@ const steps: Step[] = [
     options: [
       { value: 5000, label: "$5,000", hint: "Community Spark" },
       { value: 15000, label: "$15,000", hint: "Impact Routine" },
-      { value: 50000, label: "$50,000", hint: "Red Rocks Partner" },
+      { value: 30000, label: "$30,000", hint: "Red Rocks Partner" },
       { value: 200000, label: "$200,000", hint: "Strategic Partner" },
     ],
   },
@@ -149,7 +149,7 @@ export function MatchWizard({ athletes }: { athletes: Athlete[] }) {
   }
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="on-photo relative overflow-hidden bg-paper">
       <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[38%] lg:block">
         <Image src="/images/arena-scoreboard.jpg" alt="" fill priority sizes="38vw" className="object-cover object-[30%_center]" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#0f0e0d_0%,rgb(15_14_13/0.4)_45%,rgb(15_14_13/0.2)_100%)]" />
@@ -233,7 +233,7 @@ function ResultCard({ r, rank, comparing, onCompare }: { r: MatchResult; rank: n
           <div>
             <h2 className="font-display text-4xl text-ink">{a.name}</h2>
             <p className="mt-1 text-sm text-muted">{a.specialty} · {a.hometown}</p>
-            <p className="text-xs text-faint">Demo profile · real Red Rocks photo</p>
+            <p className="text-xs text-faint">Real athlete · sample campaign numbers</p>
           </div>
           <MatchRing score={r.score} size={76} />
         </div>

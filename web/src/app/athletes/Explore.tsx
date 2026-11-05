@@ -147,7 +147,7 @@ export function Explore({ athletes }: { athletes: Athlete[] }) {
             />
             <Select label="Group" value={f.featureType} onChange={(v) => set("featureType", v as FeatureType | "")} options={featureTypeLabels} />
             <label className="flex h-full min-h-12 cursor-pointer items-center gap-3 rounded-2xl border border-line bg-paper px-4 text-sm text-ink">
-              <input type="checkbox" checked={f.inPerson} onChange={(e) => set("inPerson", e.target.checked)} className="h-4 w-4 accent-[#cc0000]" />
+              <input type="checkbox" checked={f.inPerson} onChange={(e) => set("inPerson", e.target.checked)} className="h-4 w-4 accent-[var(--color-red)]" />
               In-person appearances
             </label>
             <button onClick={() => setF({ ...empty, q: f.q })} className="min-h-12 rounded-2xl text-sm text-muted hover:text-ink">

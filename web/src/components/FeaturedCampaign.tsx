@@ -14,7 +14,7 @@ export function FeaturedCampaign() {
         <LiveDot label="Live campaign" />
         <h3 className="mt-4 font-display text-4xl text-ink sm:text-5xl">{campaign.name}</h3>
         <p className="mt-3 max-w-md text-muted">
-          Led by Avery Davis with {campaign.partner}. Funded by {campaign.sponsorName}
+          Led by Avery Neff with {campaign.partner}. Funded by {campaign.sponsorName}
           <span className="text-faint"> (fictional sponsor)</span>.
         </p>
         <div className="mt-10">

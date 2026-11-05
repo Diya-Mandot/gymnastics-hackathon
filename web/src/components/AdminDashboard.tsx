@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertStepSetting } from "./AlertStepSetting";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -26,7 +27,7 @@ function useNow(ms = 10_000) {
 
 export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
   const { campaign, activity, lastDonation, reset, ready, error } = useLive();
-  const { deals, reset: resetDeals } = useDeals();
+  const { deals, reset: resetDeals, sync: dealSync, error: dealError } = useDeals();
   const now = useNow();
   const [fanActions, setFanActions] = useState<FanAction[]>([]);
   const [confirmReset, setConfirmReset] = useState(false);
@@ -51,6 +52,10 @@ export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
           <div className="flex items-center gap-3">
             <LiveDot label={ready ? "Live" : "Connecting"} />
             {isMockSource() && <span className="text-xs text-faint">Mock data · syncs across tabs</span>}
+            {dealSync === "supabase" && <span className="text-xs text-faint">Deals: shared via Supabase</span>}
+            {dealSync === "local" && !isMockSource() && (
+              <span className="text-xs text-faint" title={dealError ?? undefined}>Deals: this browser only</span>
+            )}
           </div>
           {presenter && <h1 className="mt-3 font-display text-5xl text-ink sm:text-6xl">WRTH <em>Admin</em></h1>}
           <p className="mt-2 text-muted">{campaign.name} · {campaign.partner}</p>
@@ -90,6 +95,7 @@ export function AdminDashboard({ presenter = false }: { presenter?: boolean }) {
           ) : (
             <button className="btn btn-line !py-2 text-sm" onClick={() => setConfirmReset(true)}>Reset demo</button>
           )}
+          <AlertStepSetting />
         </div>
       </header>
 

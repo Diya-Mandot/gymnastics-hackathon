@@ -1,4 +1,6 @@
--- Fictional data only. Safe to rerun after `supabase db reset`.
+-- Athletes are real 2027 Red Rocks gymnasts (used with permission); campaign, sponsor and supporter data is fictional.
+-- Slugs keep their original values so existing joins and links keep working; the app maps them to
+-- avery / camie / clara / ella. Safe to rerun after `supabase db reset`.
 
 insert into public.athletes (
   slug, name, specialty, short_bio, quote, photo_url, story_video_url,
@@ -7,37 +9,37 @@ insert into public.athletes (
   impact_goal, current_raised
 ) values
   (
-    'avery-davis', 'Avery Davis', 'All-Around',
+    'avery-davis', 'Avery Neff', 'All-Around',
     'A confident all-around gymnast and youth mentor who turns hard-earned lessons into encouragement for the next generation.',
-    'Gymnastics taught me confidence. Mentoring younger girls taught me why it matters.',
-    '/images/athletes/avery-davis.jpg', '/videos/avery-confidence-story.mp4',
+    'Every routine is for the kids in the stands who want to be out here one day.',
+    '/images/athletes/avery-neff.jpg', '/videos/avery-confidence-story.mp4',
     array['Youth Confidence', 'Mentorship'], array['Social Campaign', 'In-Person Event', 'Story Video'],
     array['Utah Families', 'Youth Sports'], array['Instagram', 'TikTok'], 'Available', true,
     5000, 128000, 8.4, 'Fan Favorite', 15000, 8240
   ),
   (
-    'mia-torres', 'Mia Torres', 'Balance Beam',
+    'mia-torres', 'Camie Winger', 'Beam & Vault',
     'A thoughtful beam specialist focused on making sport and community spaces more welcoming for everyone.',
     'The strongest teams make room for every person to belong.',
-    '/images/athletes/mia-torres.jpg', null,
+    '/images/athletes/camie-winger.jpg', null,
     array['Inclusion', 'Accessibility'], array['Social Campaign', 'Community Event'],
     array['Utah Families', 'Students'], array['Instagram'], 'Available', true,
     3500, 72000, 10.1, 'Rising Routine', 10000, 2450
   ),
   (
-    'sofia-patel', 'Sofia Patel', 'Uneven Bars',
+    'sofia-patel', 'Clara Raposo', 'Bars & Vault',
     'A bars specialist who connects precision, curiosity, and a love of helping young students see themselves in STEM.',
     'Practice taught me that progress comes from staying curious.',
-    '/images/athletes/sofia-patel.jpg', null,
+    '/images/athletes/clara-raposo.jpg', null,
     array['Education', 'STEM'], array['Story Video', 'School Visit', 'Social Campaign'],
     array['Students', 'Utah Families'], array['Instagram', 'YouTube'], 'Available', true,
     4000, 61000, 9.2, 'Rising Routine', 12000, 1980
   ),
   (
-    'jordan-lee', 'Jordan Lee', 'Floor Exercise',
+    'jordan-lee', 'Ella Zirbes', 'Vault, Bars & Floor',
     'An energetic floor performer who champions wellness, family connection, and sustainable routines beyond competition.',
     'The best routines are the ones that help people feel stronger together.',
-    '/images/athletes/jordan-lee.jpg', null,
+    '/images/athletes/ella-zirbes.jpg', null,
     array['Wellness', 'Family'], array['Social Campaign', 'In-Person Event', 'Sponsor Offer'],
     array['Utah Families', 'Wellness Enthusiasts'], array['Instagram', 'TikTok'], 'Limited', true,
     6000, 143000, 7.8, 'Fan Favorite', 15000, 3200
@@ -118,7 +120,7 @@ select v.business_name, v.category, v.description, v.location, v.known_connectio
 from (values
   ('BrightPath Family Wellness (fictional)', 'Wellness', 'Family wellness business aligned to youth confidence.', 'Salt Lake City, UT', 'Demo warm introduction', 15000::numeric, 'qualified'),
   ('Summit Smiles Dental (fictional)', 'Dental', 'Local family dental practice seeking a community partnership.', 'Salt Lake City, UT', null::text, 5000::numeric, 'researching'),
-  ('Wasatch Peak Credit Union (fictional)', 'Financial services', 'Utah financial-services business seeking a family and wellness activation.', 'Utah', 'Demo alumni referral', 50000::numeric, 'qualified')
+  ('Wasatch Peak Credit Union (fictional)', 'Financial services', 'Utah financial-services business seeking a family and wellness activation.', 'Utah', 'Demo alumni referral', 30000::numeric, 'qualified')
 ) as v(business_name, category, description, location, known_connection, estimated_budget, status)
 where not exists (
   select 1 from public.sponsor_prospects p where p.business_name = v.business_name
@@ -136,7 +138,7 @@ where p.business_name = 'BrightPath Family Wellness (fictional)' and a.slug = 'a
   and not exists (select 1 from public.opportunities o where o.title = 'BrightPath Confidence Starts Here');
 
 insert into public.opportunities (sponsor_prospect_id, athlete_id, title, relationship_owner, proposed_amount, stage, next_action, follow_up_date, notes)
-select p.id, a.id, 'Wasatch Peak Wellness Partnership', 'WRTH partnerships', 50000, 'Agreement', 'Confirm signature and kickoff', current_date + 7, 'Illustrative signed-agreement demo record.'
+select p.id, a.id, 'Wasatch Peak Wellness Partnership', 'WRTH partnerships', 30000, 'Agreement', 'Confirm signature and kickoff', current_date + 7, 'Illustrative signed-agreement demo record.'
 from public.sponsor_prospects p cross join public.athletes a
 where p.business_name = 'Wasatch Peak Credit Union (fictional)' and a.slug = 'jordan-lee'
   and not exists (select 1 from public.opportunities o where o.title = 'Wasatch Peak Wellness Partnership');

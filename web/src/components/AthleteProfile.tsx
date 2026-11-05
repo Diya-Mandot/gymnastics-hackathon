@@ -13,6 +13,8 @@ import { defaultBrief, scoreAthlete } from "@/lib/match";
 import { sponsorPackages, supporterTiers } from "@/lib/seed";
 import type { Athlete } from "@/lib/types";
 import { AthletePortrait } from "./AthletePortrait";
+import { BackLink } from "./BackLink";
+import { ChalkArc } from "./ChalkArc";
 import { DemoBadge, FeatureBadge } from "./Badges";
 import { MatchRing, ScoreBreakdown } from "./ScoreBreakdown";
 import { StoryPlayer } from "./StoryPlayer";
@@ -23,14 +25,21 @@ export function AthleteProfile({ athlete }: { athlete: Athlete }) {
 
   return (
     <article>
-      {/* Hero: photo bleeds off the right edge and fades into the page */}
-      <header className="relative overflow-hidden">
-        <div className="relative h-[52svh] lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[54%]">
-          <AthletePortrait athlete={athlete} className="absolute inset-0" priority credit={false} />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,#0f0e0d_100%)] lg:bg-[linear-gradient(90deg,#0f0e0d_0%,rgb(15_14_13/0.35)_28%,transparent_55%),linear-gradient(180deg,transparent_70%,#0f0e0d_100%)]" />
+      {/* Hero: text left, framed official portrait right (portrait first on phones) */}
+      <header className="relative overflow-hidden bg-paper">
+        <div className="pointer-events-none absolute -right-40 -top-40 h-[620px] w-[620px] rounded-full bg-[radial-gradient(closest-side,rgb(204_0_0/0.22),transparent)]" aria-hidden="true" />
+        <div className="relative mx-auto max-w-7xl px-4 pt-5 sm:px-8 sm:pt-7">
+          <BackLink fallback="/athletes" label="All athletes" />
         </div>
-        <div className="relative mx-auto max-w-7xl px-4 pb-14 sm:px-8 lg:flex lg:min-h-[82svh] lg:items-end lg:pb-20 lg:pt-28">
-          <div className="-mt-24 lg:mt-0 lg:max-w-[46%]">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-6 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:pb-24 lg:pt-4">
+          <figure className="relative mx-auto w-full max-w-[300px] sm:max-w-[360px] lg:order-2 lg:max-w-[440px]">
+            <ChalkArc className="absolute -left-10 -top-8 h-[60%] w-[120%] opacity-40" dashed />
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] border border-line bg-white shadow-[0_30px_80px_-30px_rgb(0_0_0/0.6)]">
+              <AthletePortrait athlete={athlete} className="absolute inset-0" priority credit={false} />
+            </div>
+            <figcaption className="mt-3 text-center text-xs text-faint">Official roster photo · Utah Athletics</figcaption>
+          </figure>
+          <div className="lg:order-1">
             <div className="flex flex-wrap gap-2">
               <FeatureBadge type={athlete.featureType} />
               <DemoBadge />
@@ -42,13 +51,13 @@ export function AthleteProfile({ athlete }: { athlete: Athlete }) {
               <em>{athlete.name.split(" ").slice(1).join(" ")}</em>
             </h1>
             <p className="mt-4 text-muted">{athlete.classYear} · {athlete.hometown}</p>
-            {athlete.photo && <p className="mt-1 text-xs text-faint">Real Red Rocks photo · name, story &amp; stats are demo content</p>}
+            {athlete.photo && <p className="mt-1 text-xs text-faint">Photo &amp; highlights: utahutes.com · quote, story, causes &amp; stats are sample content</p>}
             <blockquote className="mt-8 animate-rise border-l-2 border-red pl-5 font-display text-3xl leading-snug text-ink [animation-delay:120ms] sm:text-[34px]">
               “{athlete.quote}”
             </blockquote>
             <div className="mt-8 flex animate-rise flex-wrap gap-3 [animation-delay:180ms]">
               <Link href={`/support/${athlete.slug}`} className="btn btn-red">Back {athlete.firstName}</Link>
-              <Link href="/cards" className="btn btn-line">Collect card</Link>
+              <Link href="/support#cards" className="btn btn-line">Collect card</Link>
               <Link href="/sponsors" className="btn btn-line">Sponsor inquiry</Link>
             </div>
           </div>
@@ -63,6 +72,7 @@ export function AthleteProfile({ athlete }: { athlete: Athlete }) {
           <Metric label="Utah audience" value={`${athlete.localAudiencePct}%`} />
           <Metric label="Campaigns from" value={usd(athlete.budgetMin)} />
         </dl>
+        <p className="mt-2 text-right text-xs text-faint">Sample numbers for the demo, not her real social stats.</p>
 
         <p className="mx-auto mt-10 max-w-3xl text-center font-display text-2xl leading-snug text-ink/85 sm:text-3xl">{athlete.bio}</p>
 
@@ -93,7 +103,7 @@ export function AthleteProfile({ athlete }: { athlete: Athlete }) {
         {/* Community work + sponsor fit */}
         <section className="mt-6 grid gap-6 lg:grid-cols-2">
           <div className="card p-6 sm:p-8">
-            <h2 className="font-display text-3xl text-ink">Past community work</h2>
+            <h2 className="font-display text-3xl text-ink">Highlights</h2>
             <ul className="mt-5 divide-y divide-line border-y border-line">
               {athlete.pastWork.map((w) => (
                 <li key={w} className="py-3.5 text-ink">{w}</li>

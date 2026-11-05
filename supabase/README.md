@@ -45,5 +45,6 @@ For the QR demo, call `createDemoDonation(client, 'confidence-starts-here', 'Dem
 
 - The weighted sponsor match is 35% cause, 25% audience, 20% campaign format, 10% budget, and 10% availability. It does not rank by follower count.
 - RLS allows public reads only for designated fictional demo records. Writes happen through the narrowly scoped donation RPC.
+- Sponsor deals live in `demo_deals` (migration `202611040007`). Every deal screen (Sponsor Scout/CRM, athlete approvals, admin, revenue) reads these rows and writes through `save_demo_deal`; realtime pushes changes to every open screen. The first browser to load an empty table seeds the sample deals, and the protected demo reset restores them. If the table is missing, the app falls back to per-browser storage and the admin header shows "Deals: this browser only".
 - The contribution RPC is mock-only and always records `$10.00` with `is_demo = true`.
 - Asset URLs in seed data are intentional placeholders for optimized, approved derivatives from the Red Rocks asset pack. Do not assign a real athlete image to a fictional profile without written approval.

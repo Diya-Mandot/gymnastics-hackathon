@@ -46,14 +46,14 @@ export function mediaKitPrompt(a: Athlete, req: MediaKitRequest) {
 - Audiences: ${a.audiences.map((x) => audienceLabels[x]).join(", ")}
 - Social reach: ${compact(a.reach)} on ${a.platforms.join(", ")}; engagement rate ${a.engagementRate}%; ${a.localAudiencePct}% of audience in Utah
 - Minimum campaign budget: ${usd(a.budgetMin)}
-- Past community work: ${a.pastWork.join("; ")}
+- Highlights: ${a.pastWork.join("; ")}
 - Interests she added: ${req.interests || "(none provided)"}
 - Campaign formats she prefers: ${prefs.map((p) => campaignTypeLabels[p as keyof typeof campaignTypeLabels] ?? p).join(", ")}
 
 Ranked sponsor categories (from the platform's fit model)
 ${top.map((t) => `- ${t.category.name} (${t.score}% fit): ${t.reasons.join("; ")}`).join("\n")}
 
-Packages available: Community Spark $5,000; Impact Routine $15,000; Red Rocks Partner $50,000; Strategic Partner $200,000 (all proposed package concepts, not confirmed market rates).
+Packages available: Community Spark $5,000; Impact Routine $15,000; Red Rocks Partner $30,000; Strategic Partner $200,000 (all proposed package concepts, not confirmed market rates).
 
 Story Seed transcript (her own words)
 "${req.transcript || a.storyTranscript}"
@@ -83,7 +83,7 @@ ${top.map((t) => `- ${t.category.name} — ${t.reasons[0].charAt(0).toUpperCase(
 ## Content ideas
 - A 45-second Story Seed video on why ${causeLabels[a.causes[0]].toLowerCase()} matters to her
 - A behind-the-routine Reel filmed at the Dumke Gymnastics Center
-- ${a.pastWork[0]}: a photo recap with the sponsor's offer
+- A community-day photo recap with the sponsor's offer
 - A meet-night QR moment fans can scan from the stands
 
 ## Recommended package

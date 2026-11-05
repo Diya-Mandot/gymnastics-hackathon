@@ -45,6 +45,8 @@ export type Athlete = {
   localAudiencePct: number;
   communityScore: number;
   budgetMin: number;
+  /** Sponsor categories the athlete won't work with (personal preference or restriction) */
+  excludedCategories?: string[];
   daysUntilAvailable: number;
   inPerson: boolean;
   /** [background, initials] for the monogram square until approved athlete art arrives */

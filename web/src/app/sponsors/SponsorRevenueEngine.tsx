@@ -1,18 +1,20 @@
 "use client";
 
+import { DataTag } from "@/components/Badges";
+import { BreakEven, DealSplit } from "@/components/DealEconomics";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { AthletePortrait } from "@/components/AthletePortrait";
 import { isSigned, STAGES, useDeals, type Deal, type Stage } from "@/lib/deals";
 import { audienceLabels, causeLabels, usd } from "@/lib/labels";
 import { athletes, sponsorPackages } from "@/lib/seed";
-import { categoryById, rankAthletesForBusiness, rankCategories, sampleBusinesses, type SampleBusiness } from "@/lib/sponsors";
+import { categoryById, excludedAthletesForBusiness, rankAthletesForBusiness, rankCategories, sampleBusinesses, type SampleBusiness } from "@/lib/sponsors";
 
 const tabs = ["Sponsor Scout", "Reverse Match", "Package Builder", "CRM", "Performance"] as const;
 type Tab = (typeof tabs)[number];
 
 const packageFor = (budget: number) =>
-  budget >= 200000 ? "Strategic Partner" : budget >= 50000 ? "Red Rocks Partner" : budget >= 15000 ? "Impact Routine" : "Community Spark";
+  budget >= 200000 ? "Strategic Partner" : budget >= 30000 ? "Red Rocks Partner" : budget >= 15000 ? "Impact Routine" : "Community Spark";
 
 export function SponsorRevenueEngine() {
   const [tab, setTab] = useState<Tab>("Sponsor Scout");
@@ -76,7 +78,7 @@ export function SponsorRevenueEngine() {
       {tab === "Sponsor Scout" && (
         <section className="mt-8 grid gap-6 lg:grid-cols-[.8fr_1.2fr]">
           <div className="card p-6">
-            <p className="label">AI Sponsor Scout</p>
+            <p className="label flex items-center gap-2">AI Sponsor Scout <DataTag kind="fictional">Fictional businesses</DataTag></p>
             <h2 className="mt-3 font-display text-4xl">Qualify a sample business.</h2>
             <label className="mt-7 block text-sm text-muted">
               Business
@@ -116,6 +118,16 @@ export function SponsorRevenueEngine() {
                 </article>
               ))}
             </div>
+            {excludedAthletesForBusiness(business, athletes).length > 0 && (
+              <div className="mt-4 text-xs text-muted" aria-label="Screened out">
+                <p className="font-semibold text-ink">Screened out before ranking</p>
+                <ul className="mt-1 space-y-0.5">
+                  {excludedAthletesForBusiness(business, athletes).map((x) => (
+                    <li key={x.athlete.slug}>{x.athlete.name}: {x.blockers.join("; ")}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className="mt-6 rounded-[16px] bg-paper p-5">
               <p className="font-semibold">Recommended next action</p>
               <p className="mt-2 text-sm text-muted">
@@ -202,7 +214,7 @@ export function SponsorRevenueEngine() {
             </div>
           </div>
           <div className="card p-7">
-            <p className="label">Sponsor proposal · draft</p>
+            <p className="label flex flex-wrap items-center gap-2">Sponsor proposal · draft <DataTag kind="estimate">Proposed pricing</DataTag></p>
             <h2 className="mt-3 font-display text-5xl">
               {pkg.name} with <em>{top.firstName}.</em>
             </h2>
@@ -228,6 +240,10 @@ export function SponsorRevenueEngine() {
                 <li key={item} className="rounded-full bg-paper px-4 py-2 text-sm">✓ {item}</li>
               ))}
             </ul>
+            <div className="mt-8 grid gap-6 border-t border-line pt-6 xl:grid-cols-2">
+              <DealSplit amount={pkg.price} />
+              <BreakEven cost={pkg.price} />
+            </div>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <button
                 className="btn btn-red"
@@ -255,7 +271,7 @@ export function SponsorRevenueEngine() {
       {tab === "Performance" && (
         <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_.8fr]">
           <div className="card p-7">
-            <p className="label">Confidence Starts Here · illustrative campaign report</p>
+            <p className="label flex flex-wrap items-center gap-2">Confidence Starts Here · campaign report <DataTag kind="estimate">Illustrative results</DataTag></p>
             <h2 className="mt-3 font-display text-5xl">
               Results that make renewal <em>credible.</em>
             </h2>
@@ -272,7 +288,7 @@ export function SponsorRevenueEngine() {
             <p className="label">Renewal recommendation</p>
             <h2 className="mt-3 font-display text-4xl">Renew with a spring family-confidence routine.</h2>
             <p className="mt-5 leading-relaxed text-muted">
-              The illustrative offer-claim rate beat the campaign target by 41%. Recommend a $15K follow-on campaign with Avery and Mia,
+              The illustrative offer-claim rate beat the campaign target by 41%. Recommend a $15K follow-on campaign with Avery and Camie,
               subject to sponsor review and athlete approval.
             </p>
             <Link className="btn btn-red mt-7" href="/routines?athlete=avery&package=routine&ai=1#ai-brief">Draft renewal proposal</Link>

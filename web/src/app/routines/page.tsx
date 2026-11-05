@@ -3,6 +3,7 @@ import { PageHero } from "@/components/PageHero";
 import { athleteBySlug, sponsorPackages } from "@/lib/seed";
 import { RoutineBuilder } from "./RoutineBuilder";
 import { Workspace } from "./Workspace";
+import { SponsorValue } from "./SponsorValue";
 
 export const metadata = { title: "Impact Routines" };
 
@@ -34,7 +35,9 @@ export default async function RoutinesPage({ searchParams }: { searchParams: Pro
         <RoutineBuilder key={`${athlete.slug}-${pkg.id}`} athlete={athlete} initialPackage={pkg.id} autoAi={sp.ai === "1"} />
       </div>
 
-      <section className="relative mt-24 flex min-h-[46svh] items-center overflow-hidden">
+      <SponsorValue />
+
+      <section className="on-photo relative mt-24 flex min-h-[46svh] items-center overflow-hidden">
         <Image src="/images/fan-signs.jpg" alt="Young fans holding Red Rocks signs at a meet" fill sizes="100vw" className="object-cover object-[center_40%]" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(15_14_13/0.85)_0%,rgb(15_14_13/0.35)_60%,rgb(15_14_13/0.15)_100%)]" />
         <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-8">

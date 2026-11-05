@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { athleteBySlug, athletes, seedCampaign } from "../seed";
 import type { Campaign, Donation, LiveState } from "../types";
 import type { GiveInput, LiveSource } from "./types";
@@ -27,8 +27,12 @@ type DonationRow = {
   campaigns: { name: string } | null;
 };
 
+// Database slugs predate the real-athlete switch; map them to the app's slugs.
+const legacySlugs: Record<string, string> = { "avery-davis": "avery", "mia-torres": "camie", "sofia-patel": "clara", "jordan-lee": "ella" };
+
 const uiSlug = (source: { slug: string; name: string } | null) =>
-  athletes.find((athlete) => athlete.name === source?.name)?.slug ?? source?.slug ?? seedCampaign.athleteSlug;
+  athletes.find((athlete) => athlete.name === source?.name)?.slug ??
+  (source ? legacySlugs[source.slug] ?? source.slug : seedCampaign.athleteSlug);
 
 const toCampaign = (row: CampaignRow): Campaign => ({
   ...seedCampaign,
@@ -56,7 +60,7 @@ const toDonation = (row: DonationRow): Donation => {
     createdAt: row.created_at,
     supporterName: row.supporter_name,
     athleteSlug,
-    athleteName: row.athletes?.name ?? athleteBySlug(athleteSlug)?.name ?? "Demo athlete",
+    athleteName: athleteBySlug(athleteSlug)?.name ?? row.athletes?.name ?? "Red Rocks athlete",
     campaignName: row.campaigns?.name ?? seedCampaign.name,
     amount: Number(row.amount),
     supportType: supportType(row.support_type),
@@ -65,8 +69,9 @@ const toDonation = (row: DonationRow): Donation => {
   };
 };
 
-export function createSupabaseSource(url: string, anonKey: string): LiveSource {
-  const db = createClient(url, anonKey);
+let channelCount = 0;
+
+export function createSupabaseSource(db: SupabaseClient): LiveSource {
   let current: LiveState | null = null;
 
   async function load(): Promise<LiveState> {
@@ -102,8 +107,10 @@ export function createSupabaseSource(url: string, anonKey: string): LiveSource {
       return { state, donation: state.activity[0] };
     },
     subscribe(callback) {
+      // One channel per subscriber: Supabase reuses a channel with the same name, so a second
+      // listener on the page (e.g. the admin dashboard plus its gift alerts) would cancel the first.
       const channel = db
-        .channel("rock-the-routine-live")
+        .channel(`rock-the-routine-live-${++channelCount}`)
         .on("postgres_changes", { event: "INSERT", schema: "public", table: "donations" }, async () => {
           const state = await load();
           callback({ state, donation: state.activity[0] });

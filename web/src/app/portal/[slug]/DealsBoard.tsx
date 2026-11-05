@@ -1,5 +1,6 @@
 "use client";
 
+import { DealSplit } from "@/components/DealEconomics";
 import { useState } from "react";
 import type { Role } from "@/hooks/useRole";
 import { isSigned, STAGES, type Deal } from "@/lib/deals";
@@ -99,6 +100,9 @@ function DealDetail({ deal, athlete, role, update }: { deal: Deal; athlete: Athl
         <Money label="Outstanding" value={signed ? usd(outstanding) : "—"} />
       </dl>
       <p className="mt-2 text-xs text-faint">A signed agreement is a commitment. Collected is cash actually received. They are tracked separately.</p>
+      <div className="mt-6 rounded-[16px] border border-line p-5">
+        <DealSplit amount={deal.amount} title={`${deal.packageName} is not all athlete pay`} />
+      </div>
       {staff && signed && outstanding > 0 && (
         <form
           className="mt-4 flex flex-wrap items-center gap-2"
@@ -137,7 +141,7 @@ function DealDetail({ deal, athlete, role, update }: { deal: Deal; athlete: Athl
                 checked={t.done}
                 disabled={!canToggle}
                 onChange={() => update(deal.id, (d) => ({ ...d, tasks: d.tasks.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)) }))}
-                className="h-4 w-4 accent-[#cc0000]"
+                className="h-4 w-4 accent-[var(--color-red)]"
                 aria-label={t.title}
               />
               <span className={`flex-1 text-sm ${t.done ? "text-faint line-through" : "text-ink"}`}>{t.title}</span>

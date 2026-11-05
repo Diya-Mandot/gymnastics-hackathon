@@ -23,7 +23,7 @@ export function AthletePortrait({ athlete, className = "", priority = false, cre
       <div className={`${position} @container overflow-hidden ${className}`}>
         <Image
           src={athlete.photo}
-          alt={`Red Rocks gymnast shown on the ${athlete.name} demo profile`}
+          alt={`${athlete.name}, Utah Red Rocks gymnast`}
           fill
           priority={priority}
           className="object-cover"
@@ -31,7 +31,7 @@ export function AthletePortrait({ athlete, className = "", priority = false, cre
           sizes="(max-width: 768px) 100vw, 40vw"
         />
         {credit && <span className="absolute right-2.5 top-2.5 hidden rounded-full bg-paper/80 px-2.5 py-1 text-[10px] font-medium text-ink/80 backdrop-blur @[220px]:block">
-          Real photo · demo profile
+          Photo: Utah Athletics
         </span>}
       </div>
     );

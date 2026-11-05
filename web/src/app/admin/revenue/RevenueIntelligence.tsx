@@ -1,5 +1,7 @@
 "use client";
 
+import { DataTag } from "@/components/Badges";
+import { YearOnePlan } from "./YearOnePlan";
 import { useState } from "react";
 import { AnimatedNumber } from "@/components/AnimatedNumber";
 import { LiveDot } from "@/components/CampaignProgress";
@@ -11,7 +13,7 @@ import { seedCampaign } from "@/lib/seed";
 
 // Chart colors validated with the dataviz palette checker on the #181716 card surface (dark mode):
 // all checks pass, worst adjacent CVD ΔE 26.3. Stack order keeps red and amber apart.
-const C = { sponsor: "#e5352b", supporters: "#3d8be0", upgrades: "#c08a1e" };
+const C = { sponsor: "var(--chart-sponsor)", supporters: "var(--chart-supporters)", upgrades: "var(--chart-upgrades)" };
 
 const GOAL = 2_000_000;
 type ScenarioKey = keyof typeof scenarios;
@@ -61,7 +63,9 @@ export function RevenueIntelligence() {
         </div>
       </header>
 
-      {/* Headline numbers */}
+      <YearOnePlan simulatedNew={o.newCollected} scenario={scenario} />
+
+      {/* Headline numbers: the funnel simulator */}
       <section className="card mt-8 grid grid-cols-2 divide-line lg:grid-cols-4 lg:divide-x" aria-label="Year-one results">
         <Hero label="New collected NIL funding" value={o.newCollected} sub="year 1 · fans + sponsors" />
         <Hero label="Net incremental benefit" value={o.netIncremental} sub="after build, operating and variable costs" tone={o.netIncremental >= 0 ? "good" : "bad"} />
@@ -160,7 +164,7 @@ function Slider({ label, value, min, max, step, fmt, onChange }: {
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-2 w-full accent-[#cc0000]"
+        className="mt-2 w-full accent-[var(--color-red)]"
       />
     </label>
   );
@@ -322,7 +326,7 @@ function LiveRecords() {
   return (
     <section className="card mt-6 p-6" aria-label="Live demo records">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <h2 className="font-display text-2xl text-ink">Live demo records</h2>
+        <h2 className="flex items-center gap-3 font-display text-2xl text-ink">Live demo records <DataTag kind="live" /></h2>
         <span className="flex items-center gap-3 text-xs text-faint">
           <LiveDot /> Sample records from this session · not part of the model above
         </span>

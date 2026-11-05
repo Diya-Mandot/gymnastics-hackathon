@@ -5,6 +5,8 @@ import { PhotoStrip } from "@/components/PhotoStrip";
 import { athletes, supporterTiers } from "@/lib/seed";
 import { AthleteCard } from "@/components/AthleteCard";
 import { FindYourRoutine } from "./FindYourRoutine";
+import { SupporterOffers, SupporterWelcome } from "./SupporterHub";
+import { CardCollection } from "@/components/CardCollection";
 
 export const metadata = { title: "Support" };
 
@@ -37,6 +39,10 @@ export default function SupportIndex() {
         <PhotoStrip />
       </section>
 
+      <div className="px-4 sm:px-8">
+        <SupporterWelcome />
+      </div>
+
       <section id="find" className="mx-auto max-w-7xl scroll-mt-16 px-4 pb-20 sm:px-8">
         <FindYourRoutine />
       </section>
@@ -64,10 +70,12 @@ export default function SupportIndex() {
             ))}
           </div>
           <p className="mt-6 text-sm text-muted">
-            Plus premium celebration videos: a 15–30 second birthday, graduation, or good-luck message from an athlete.
+            Plus fan experiences like celebration videos and meet &amp; greets, and small community activities you can fund below.
           </p>
         </div>
       </section>
+      <CardCollection />
+      <SupporterOffers />
     </>
   );
 }

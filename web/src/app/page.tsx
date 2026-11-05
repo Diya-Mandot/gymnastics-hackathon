@@ -8,10 +8,10 @@ import { SectionHeading } from "@/components/Section";
 import { athletes } from "@/lib/seed";
 
 const paths = [
-  { href: "/athletes", title: "I’m a fan", body: "Watch athlete stories, scan at meets, share a confidence note.", img: "/images/fans-utes.jpg", alt: "Fans in red with arms raised under arena lights" },
-  { href: "/support", title: "I want to support", body: "Back an athlete or a cause, once or every month.", img: "/images/fan-signs-2.jpg", alt: "A family with handmade Red Rocks signs in the stands" },
-  { href: "/match", title: "I’m a business", body: "Get matched with the athlete whose story fits your brand.", img: "/images/arena-scoreboard.jpg", alt: "The Huntsman Center scoreboard with sponsor signage" },
-  { href: "/routines", title: "I’m an athlete", body: "Turn your story and community work into NIL opportunities.", img: "/images/team-wrth.jpg", alt: "The Red Rocks team in Who Rocks the House shirts" },
+  { href: "/signin?as=supporter", title: "I’m a supporter", body: "Fans, alumni, parents and season-ticket holders: give, subscribe, or buy a fan experience.", img: "/images/fan-signs-2.jpg", alt: "A family with handmade Red Rocks signs in the stands" },
+  { href: "/signin?as=business", title: "I’m a business", body: "Local and national brands: get matched and fund an Impact Routine with measured results.", img: "/images/arena-scoreboard.jpg", alt: "The Huntsman Center scoreboard with sponsor signage" },
+  { href: "/signin?as=athlete", title: "I’m an athlete", body: "Turn your story and community work into NIL opportunities you approve.", img: "/images/team-wrth.jpg", alt: "The Red Rocks team in Who Rocks the House shirts" },
+  { href: "/signin?as=team", title: "I’m on the WRTH team", body: "Run sponsors, campaigns, approvals and revenue in one workspace.", img: "/images/fans-utes.jpg", alt: "Fans in red with arms raised under arena lights" },
 ];
 
 const routineParts = [
@@ -24,12 +24,6 @@ const routineParts = [
   ["Impact report", "What it reached, and what to renew."],
 ];
 
-const path = [
-  { label: "Today (unverified)", value: "$200K" },
-  { label: "Year 1", value: "$646K" },
-  { label: "Year 2", value: "$1.24M" },
-  { label: "Year 3", value: "$2M" },
-];
 
 export default function Home() {
   const favorites = athletes.filter((a) => a.featureType === "fan-favorite");
@@ -38,7 +32,7 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[88svh] items-end overflow-hidden">
+      <section className="on-photo relative flex min-h-[88svh] items-end overflow-hidden bg-paper">
         <Image
           src="/images/arena-fireworks.jpg"
           alt="A packed Huntsman Center crowd in red as fireworks open a Red Rocks meet"
@@ -61,7 +55,7 @@ export default function Home() {
             <div className="mt-8 flex animate-rise flex-wrap gap-3 [animation-delay:180ms]">
               <Link href="/match" className="btn btn-red">Get matched</Link>
               <Link href="/athletes" className="btn btn-line">Meet the athletes</Link>
-              <Link href="/cards" className="btn btn-line">Collect cards</Link>
+              <Link href="/support#cards" className="btn btn-line">Collect cards</Link>
             </div>
           </div>
           <div className="w-full max-w-sm animate-rise [animation-delay:240ms]">
@@ -79,7 +73,7 @@ export default function Home() {
       <section className="border-t border-line bg-surface">
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-8">
           <SectionHeading eyebrow="Everyone has a role" title={<>Join the <em>routine.</em></>}>
-            Fans, supporters, businesses, and athletes all take part in NIL differently. Start where you fit.
+            Supporters, businesses, athletes and the WRTH team each take part differently. Sign in as your group to see your tools.
           </SectionHeading>
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {paths.map((p, i) => (
@@ -184,7 +178,7 @@ export default function Home() {
       </section>
 
       {/* Salt flats band */}
-      <section className="relative flex min-h-[70svh] items-start overflow-hidden">
+      <section className="on-photo relative flex min-h-[70svh] items-start overflow-hidden">
         <Image
           src="/images/salt-flats-leap.jpg"
           alt="A gymnast in a red leotard leaping above the Bonneville Salt Flats"
@@ -198,29 +192,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Three-year path */}
-      <section className="border-t border-line bg-surface">
-        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-8">
-          <SectionHeading eyebrow="Illustrative model" title={<>A path toward <em>$2M</em> in NIL activity.</>} align="center">
-            Sponsor campaigns, new supporters, and athlete experiences, with renewal built in. These are planning targets: the
-            $200K starting point stays unverified until WRTH confirms actual figures.
-          </SectionHeading>
-          <ol className="relative mx-auto mt-16 grid max-w-5xl grid-cols-2 gap-y-10 md:grid-cols-4">
-            <span className="absolute left-[12.5%] right-[12.5%] top-[7px] hidden h-px bg-line md:block" aria-hidden="true" />
-            {path.map((p, i) => (
-              <li key={p.label} className="relative text-center">
-                <span className={`relative mx-auto block h-3.5 w-3.5 rounded-full border-2 ${i === 3 ? "border-red bg-red" : "border-red bg-surface"}`} />
-                <p className="mt-5 text-sm text-muted">{p.label}</p>
-                <p className="mt-1 font-display text-5xl font-medium text-ink sm:text-6xl">{p.value}</p>
-              </li>
-            ))}
-          </ol>
-          <div className="mt-12 text-center">
-            <Link href="/admin/revenue" className="btn btn-line">Try the revenue simulator</Link>
-            <p className="mt-4 text-xs text-faint">Targets, not guarantees.</p>
-          </div>
-        </div>
-      </section>
     </>
   );
 }

@@ -37,7 +37,56 @@
   }
 }
 
+/* Chart series, validated against the dark card surface. Overridden per theme below. */
+:root { --chart-sponsor: #e5352b; --chart-supporters: #3d8be0; --chart-upgrades: #c08a1e; }
+
+/* Light theme: warm paper, same Utah red. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-red: #cc0000;
+  --color-red-lit: #b30000;
+  --color-red-dark: #8f0000;
+  --color-red-soft: #fbe6e3;
+  --color-paper: #f7f4ef;
+  --color-surface: #ffffff;
+  --color-line: #e2dcd2;
+  --color-sand: #e9e3d9;
+  --color-sand-soft: #f1ece4;
+  --color-ink: #1c1a17;
+  --color-muted: #5c574f;
+  --color-faint: #857f76;
+  --color-green: #1d7a55;
+  --chart-sponsor: #c4271e; --chart-supporters: #2a6fbf; --chart-upgrades: #9a6a0c;
+}
+
+/* Colour-blind safe: dark base, Okabe–Ito palette. Good/bad are blue/orange, never red/green. */
+:root[data-theme="cb"] {
+  --color-red: #b85000;
+  --color-red-lit: #f0a33a;
+  --color-red-dark: #ffc27a;
+  --color-red-soft: #3a2614;
+  --color-green: #56b4e9;
+  --chart-sponsor: #e69f00; --chart-supporters: #56b4e9; --chart-upgrades: #cc79a7;
+}
+
+/* Text over photos keeps the dark palette in every theme. */
+:root[data-theme="light"] .on-photo {
+  color-scheme: dark;
+  --color-paper: #0f0e0d;
+  --color-surface: #181716;
+  --color-line: #2b2927;
+  --color-sand: #2e2b28;
+  --color-sand-soft: #23211f;
+  --color-ink: #f3efe8;
+  --color-muted: #a39d94;
+  --color-faint: #716c65;
+  --color-red-lit: #ff4a3d;
+  --color-red-dark: #ff8f85;
+  --color-red-soft: #3a1513;
+}
+
 html { scroll-behavior: smooth; color-scheme: dark; }
+:root[data-theme="light"] { color-scheme: light; }
 body {
   background: var(--color-paper);
   color: var(--color-ink);
@@ -84,11 +133,11 @@ body {
   }
   .btn:disabled { opacity: 0.55; cursor: not-allowed; }
   .btn-red { background: var(--color-red); color: #fff; }
-  .btn-red:hover:not(:disabled) { background: #b00000; }
+  .btn-red:hover:not(:disabled) { filter: brightness(0.88); }
   .btn-line { background: var(--color-surface); color: var(--color-ink); border: 1px solid var(--color-line); }
   .btn-line:hover { border-color: var(--color-ink); }
   .btn-ink { background: var(--color-ink); color: var(--color-paper); }
-  .btn-ink:hover { background: #fff; }
+  .btn-ink:hover { opacity: 0.88; }
   .tag {
     display: inline-flex;
     align-items: center;

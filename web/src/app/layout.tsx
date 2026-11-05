@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Instrument_Serif } from "next/font/google";
 import { NavBar } from "@/components/NavBar";
+import { BackBar } from "@/components/BackBar";
 import { Footer } from "@/components/Footer";
 import { AudienceProvider } from "@/components/AudienceProvider";
 import { AudienceGate } from "@/components/AudienceGate";
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </a>
         <AudienceProvider>
           <NavBar />
+          <BackBar />
           <main id="main">
             <AudienceGate>{children}</AudienceGate>
           </main>

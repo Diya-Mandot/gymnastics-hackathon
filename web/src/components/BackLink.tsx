@@ -1,13 +1,36 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-/** Goes back to wherever the visitor came from on this site, or to a sensible page if they arrived directly (e.g. a QR scan). */
+// Pages visited in this tab, so "Back" knows whether there is an in-site page to return to.
+// Client-side navigation doesn't update document.referrer, so we track it ourselves.
+const KEY = "rtr:visited";
+
+function readStack(): string[] {
+  try { return JSON.parse(sessionStorage.getItem(KEY) ?? "[]") as string[]; } catch { return []; }
+}
+function writeStack(stack: string[]) {
+  try { sessionStorage.setItem(KEY, JSON.stringify(stack.slice(-50))); } catch {}
+}
+
+/** Mount once (in the layout) to record each page the visitor opens. */
+export function useTrackVisits() {
+  const pathname = usePathname();
+  useEffect(() => {
+    const stack = readStack();
+    if (stack[stack.length - 1] === pathname) return;
+    if (stack[stack.length - 2] === pathname) stack.pop(); // went back
+    else stack.push(pathname);
+    writeStack(stack);
+  }, [pathname]);
+}
+
+/** Goes back to the previous page on this site, or to `fallback` if they arrived directly (e.g. a QR scan). */
 export function BackLink({ fallback, label = "Back", className = "" }: { fallback: string; label?: string; className?: string }) {
   const router = useRouter();
   function go() {
-    const fromHere = typeof document !== "undefined" && document.referrer.startsWith(window.location.origin);
-    if (fromHere && window.history.length > 1) router.back();
+    if (readStack().length > 1) router.back();
     else router.push(fallback);
   }
   return (
